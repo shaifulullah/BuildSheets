@@ -1,0 +1,443 @@
+﻿@model IEnumerable<TesterParameter>
+
+
+@{
+    ViewData["Title"] = "Main";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Search Device</h3>
+
+<form asp-controller="TesterParameters" asp-action="Main" method="get" value=@ViewBag.SearchString>
+    <div class="row">
+        <div class="col-md-3">
+            <input type="text" name="name" class="form-control" />
+        </div>
+
+        <div class="col-md-2">
+            <input type="submit" value="Search" class="btn btn-info" />
+
+            <a asp-controller="TesterParameters" asp-action="Create" class="btn btn-primary" style="margin-left: 15px;">Create</a>
+        </div>
+        <br />
+    </div>
+    <div class="col-md-3">
+        <div class="alert-danger">
+            @if (ViewBag.ErrorMessage != null)
+            {@ViewBag.ErrorMessage}
+        </div>
+    </div>
+</form>
+
+<br />
+@if (Model != null)
+{
+    <div class="row">
+        <div class="col-md-8">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th width="40%">
+                            Device Name
+                        </th>
+                        <th width="40%">
+                            Parameters
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        @foreach (var device in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <a asp-controller="TesterParameters" asp-action="Details" asp-route-name="@device.DeviceName">@device.DeviceName</a>
+                                </td>
+                                <td>
+                                    @device.Parameter
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*@model TesterParameter
+
+
+    @{
+        ViewData["Title"] = "Main";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+
+    <h3>Search Device</h3>
+
+    <form asp-controller="TesterParameters" asp-action="Main" method="get">
+        <div class="row">
+            <div class="col-md-3">
+                <input type="text" name="name" class="form-control" value="@Model?.DeviceName" />
+            </div>
+
+            <div class="col-md-2">
+                <input type="submit" value="Search" class="btn btn-info" />
+
+                <a asp-controller="TesterParameters" asp-action="Create" class="btn btn-primary" style="margin-left: 15px;">Create</a>
+            </div>
+            <br />
+        </div>
+        <div class="col-md-3">
+            <div class="alert-danger">
+                @if (ViewBag.ErrorMessage != null)
+                {@ViewBag.ErrorMessage}
+            </div>
+        </div>
+    </form>
+
+    <br />
+    @if (Model != null)
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <h3>Device Parameters:</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th width="40%">
+                                Name
+                            </th>
+                            <th width="40%">
+                                Parameter
+                            </th>
+                            <th width="20%"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model?.TesterParameterCode?.DeviceParameters?.Parameters != null)
+                        {
+                            @foreach (var param in Model.TesterParameterCode.DeviceParameters.Parameters)
+                            {
+                                <tr>
+                                    <td>
+                                        @param.Name
+                                    </td>
+                                    <td>
+                                        @param.InnerText
+                                    </td>
+                                    <td>
+                                        <a asp-controller="TesterParameters"
+                                           asp-action="Edit"
+                                           asp-route-id="@Model.Id"
+                                           asp-route-type="@TesterParameterCodeType.DeviceParameters"
+                                           asp-route-parameterName="@param.Name">
+                                            Edit
+                                        </a> |
+                                        <a asp-controller="TesterParameters"
+                                           asp-action="Delete"
+                                           asp-route-id="@Model.Id"
+                                           asp-route-type="@TesterParameterCodeType.DeviceParameters"
+                                           asp-route-parameterName="@param.Name">
+                                            Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="2">
+                                    No records found!!
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <a asp-controller="TesterParameters"
+                                   asp-action="Add"
+                                   asp-route-id="@Model.Id"
+                                   asp-route-type="@TesterParameterCodeType.DeviceParameters"
+                                   class="btn btn-primary">Add</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <h3>Firmware Gates:</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th width="40%">
+                                Name
+                            </th>
+                            <th width="40%">
+                                Parameter
+                            </th>
+                            <th width="20%"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model?.TesterParameterCode?.FirmwareGates?.Parameters != null)
+                        {
+                            @foreach (var param in Model.TesterParameterCode.FirmwareGates.Parameters)
+                            {
+                                <tr>
+                                    <td>
+                                        @param.Name
+                                    </td>
+                                    <td>
+                                        @param.InnerText
+                                    </td>
+                                    <td>
+                                        <a asp-controller="TesterParameters"
+                                           asp-action="Edit"
+                                           asp-route-id="@Model.Id"
+                                           asp-route-type="@TesterParameterCodeType.FirmwareGates"
+                                           asp-route-parameterName="@param.Name">
+                                            Edit
+                                        </a> |
+                                        <a asp-controller="TesterParameters"
+                                           asp-action="Delete"
+                                           asp-route-id="@Model.Id"
+                                           asp-route-type="@TesterParameterCodeType.FirmwareGates"
+                                           asp-route-parameterName="@param.Name">
+                                            Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="2">
+                                    No records found!!
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <a asp-controller="TesterParameters"
+                                   asp-action="Add"
+                                   asp-route-id="@Model.Id"
+                                   asp-route-type="@TesterParameterCodeType.FirmwareGates"
+                                   class="btn btn-primary">Add</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+       <div class="row">
+            <div class="col-md-8">
+                <h3>Modem Include List:</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Parameter
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model?.TesterParameterCode?.ModemIncludeList?.Parameters != null)
+                        {
+                            @foreach (var param in Model.TesterParameterCode.ModemIncludeList.Parameters)
+                            {
+                                <tr>
+                                    <td>
+                                        @param.Name
+                                    </td>
+                                    <td>
+                                        @param.InnerText
+                                    </td>
+                                    <td>
+                                        <a asp-controller="TesterParameters"
+                                           asp-action="Edit"
+                                           asp-route-id="@Model.Id"
+                                           asp-route-type="@TesterParameterCodeType.ModemIncludeList"
+                                           asp-route-parameterName="@param.Name">
+                                            Edit
+                                        </a> |
+                                        <a asp-controller="TesterParameters"
+                                           asp-action="Delete"
+                                           asp-route-id="@Model.Id"
+                                           asp-route-type="@TesterParameterCodeType.ModemIncludeList"
+                                           asp-route-parameterName="@param.Name">
+                                            Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="2">
+                                    No records found!!
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <a asp-controller="TesterParameters"
+                                   asp-action="Add"
+                                   asp-route-id="@Model.Id"
+                                   asp-route-type="@TesterParameterCodeType.ModemIncludeList"
+                                   class="btn btn-primary">Add</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <h3>Modem Exclude List:</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Parameter
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model?.TesterParameterCode?.ModemExcludeList?.Parameters != null)
+                        {
+                            @foreach (var param in Model.TesterParameterCode.ModemExcludeList.Parameters)
+                            {
+                                <tr>
+                                    <td>
+                                        @param.Name
+                                    </td>
+                                    <td>
+                                        @param.InnerText
+                                    </td>
+                                    <td>
+                                        <a asp-controller="TesterParameters"
+                                           asp-action="Edit"
+                                           asp-route-id="@Model.Id"
+                                           asp-route-type="@TesterParameterCodeType.ModemExcludeList"
+                                           asp-route-parameterName="@param.Name">
+                                            Edit
+                                        </a> |
+                                        <a asp-controller="TesterParameters"
+                                           asp-action="Delete"
+                                           asp-route-id="@Model.Id"
+                                           asp-route-type="@TesterParameterCodeType.ModemExcludeList"
+                                           asp-route-parameterName="@param.Name">
+                                            Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="2">
+                                    No records found!!
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <a asp-controller="TesterParameters"
+                                   asp-action="Add"
+                                   asp-route-id="@Model.Id"
+                                   asp-route-type="@TesterParameterCodeType.ModemExcludeList"
+                                   class="btn btn-primary">Add</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+     }
+
+    @section Scripts {
+        <script>
+            function deleteParameter(id, type, parameterName) {
+                if (!confirm('Are you sure to delete "' + parameterName + '" parameter?')) return;
+
+                $.post('/BuildSheetsArea/TesterParameter/Delete', { id, type, parameterName }, function (response) {
+                    if (response.isSucceeded) {
+                        alert('"' + parameterName + '" parameter has been deleted successfully.');
+                        location.reload();
+                    }
+                    else {
+                        alert('An error occurred while deleting"' + parameterName + '" parameter. Please try again.');
+                    }
+                });
+            }
+        </script>
+    }*@

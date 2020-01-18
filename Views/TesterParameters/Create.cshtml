@@ -1,0 +1,146 @@
+﻿@model AddTesterParameter
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+    </head>
+<h1>Create New</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div class="form-group">
+                <label class="control-label">Device Name:</label>
+                <input asp-for="DeviceName" class="form-control" />
+                <span asp-validation-for="DeviceName" class="text-danger"></span>
+            </div>
+            <div class="alert-danger">
+                @if (ViewBag.DeviceAlreadyExists != null)
+                {@ViewBag.DeviceAlreadyExists}
+            </div>
+            <br />
+
+            <h3>Device Parameters:</h3>
+            @for (var i = 0; i < 3; i++)
+            {
+                <div class="form-group">
+                    <label class="control-label">Name: (Please enter a name without any spaces)</label>
+                    @*<input name="DeviceParameters.Parameters[@i].Key" class="form-control noWhiteSpaces" />*@
+                    <select class="combobox form-control noWhiteSpaces" name="DeviceParameters.Parameters[@i].Key" role="combobox">
+                        @foreach (SelectListItem sli in ViewBag.DeviceParameterName)
+                        {
+                            if (sli.Value == "1")
+                            {
+                                <option value="@sli.Value" selected>@sli.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@sli.Value">@sli.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Value:</label>
+                    <input name="DeviceParameters.Parameters[@i].Value" class="form-control" />
+                </div>
+            }
+            <br />
+            <h3>Firmware Gates:</h3>
+            @for (var i = 0; i < 2; i++)
+            {
+                <div class="form-group">
+                    <label class="control-label">Name: (Please enter a name without any spaces)</label>
+                    @*<input name="FirmwareGates.Parameters[@i].Key" class="form-control noWhiteSpaces" />*@
+                    <select class="combobox form-control noWhiteSpaces" name="FirmwareGates.Parameters[@i].Key" role="combobox">
+                        @foreach (SelectListItem sli in ViewBag.FirmwareGatesName)
+                        {
+                            if (sli.Value == "1")
+                            {
+                                <option value="@sli.Value" selected>@sli.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@sli.Value">@sli.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Value:</label>
+                    <input name="FirmwareGates.Parameters[@i].Value" class="form-control" />
+                </div>
+            }
+
+            <br />
+            <h3>Modem Include List:</h3>
+            @for (var i = 0; i < 2; i++)
+            {
+                <div class="form-group">
+                    <label class="control-label">Name: (Please enter a name without any spaces)</label>
+                    @*<input name="ModemIncludeList.Parameters[@i].Key" class="form-control noWhiteSpaces" />*@
+                    <select class="combobox form-control noWhiteSpaces" name="ModemIncludeList.Parameters[@i].Key" role="combobox">
+                        @foreach (SelectListItem sli in ViewBag.ModemIncludeList)
+                        {
+                            if (sli.Value == "1")
+                            {
+                                <option value="@sli.Value" selected>@sli.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@sli.Value">@sli.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Value:</label>
+                    <input name="ModemIncludeList.Parameters[@i].Value" class="form-control" />
+                </div>
+            }
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Main">Back to Search</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(".noWhiteSpaces").on("keyup", function (e) {
+            $(this).val($(this).val().toString().replace(" ", ""));
+        });
+        $(".noWhiteSpaces").on("keypress", function (event) {
+            var regex = new RegExp("^[a-zA-Z]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key) && !this.value.length) {
+                event.preventDefault();
+                return false;
+            }
+            var regex1 = new RegExp("^[a-zA-Z0-9]+$");
+            var key1 = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex1.test(key1)) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    </script>
+    <script>
+        $(".combobox").select2({
+            tags: true
+        });
+    </script>
+}

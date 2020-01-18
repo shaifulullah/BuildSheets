@@ -1,0 +1,69 @@
+﻿@model EditTesterParameter
+@{
+    ViewData["Title"] = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Add</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Add">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Type" />
+            <div class="form-group">
+                <label class="control-label">Parameter Name</label>
+                <input asp-for="ParameterName" class="form-control noWhiteSpaces" />
+                <span asp-validation-for="ParameterName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Parameter Value</label>
+                <input asp-for="ParameterValue" class="form-control" />
+                <span asp-validation-for="ParameterValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    @*<a asp-action="Main" asp-route-name="@ViewBag.DeviceName">Back to List</a>*@
+    <a asp-controller="TesterParameters" asp-action="Details" asp-route-name="@ViewBag.DeviceName">Back to Details</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @*<script type="text/javascript">
+            $(".noWhiteSpaces").on("keyup", function (e) {
+                $(this).val($(this).val().toString().replace(" ", ""));
+            });
+            $(".noWhiteSpaces").on("keypress", function(e) {
+                if ((e.which === 48 || e.which === 49 || e.which === 50 || e.which === 51 || e.which === 52
+                    || e.which === 53 || e.which === 54 || e.which === 55 || e.which === 56 || e.which === 57)
+                    && !this.value.length)
+                        e.preventDefault();
+            });
+        </script>*@
+    <script type="text/javascript">
+        $(".noWhiteSpaces").on("keyup", function (e) {
+            $(this).val($(this).val().toString().replace(" ", ""));
+        });
+        $(".noWhiteSpaces").on("keypress", function (event) {
+            var regex = new RegExp("^[a-zA-Z]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key) && !this.value.length) {
+                event.preventDefault();
+                return false;
+            }
+            var regex1 = new RegExp("^[a-zA-Z0-9]+$");
+            var key1 = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex1.test(key1)) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    </script>
+}
