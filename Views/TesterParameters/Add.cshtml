@@ -14,8 +14,53 @@
             <input type="hidden" asp-for="Type" />
             <div class="form-group">
                 <label class="control-label">Parameter Name</label>
-                <input asp-for="ParameterName" class="form-control noWhiteSpaces" />
-                <span asp-validation-for="ParameterName" class="text-danger"></span>
+                @*<input asp-for="ParameterName" class="form-control noWhiteSpaces" />*@
+                @*<span asp-validation-for="ParameterName" class="text-danger"></span>*@
+                @if (ViewBag.DeviceParameterName != null)
+                {
+                    <select class="combobox form-control noWhiteSpaces" name="ParameterName" role="combobox">
+                        @foreach (SelectListItem sli in ViewBag.DeviceParameterName)
+                        {
+                            <option value="@sli.Value">@sli.Text</option>
+                        }
+                    </select>
+                }
+                else if (ViewBag.FirmwareGatesName != null)
+                {
+                }
+                else if (ViewBag.ModemIncludeList != null)
+                {
+                    <select class="combobox form-control noWhiteSpaces" name="ParameterName" role="combobox">
+                        @foreach (SelectListItem sli in ViewBag.ModemIncludeList)
+                        {
+                            if (sli.Value == "1")
+                            {
+                                <option value="@sli.Value" selected>@sli.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@sli.Value">@sli.Text</option>
+                            }
+                        }
+                    </select>
+                }
+                else if(ViewBag.ModemExcludeList != null)
+                {
+                    <select class="combobox form-control noWhiteSpaces" name="ParameterName" role="combobox">
+                        @foreach (SelectListItem sli in ViewBag.ModemExcludeList)
+                        {
+                            if (sli.Value == "1")
+                            {
+                                <option value="@sli.Value" selected>@sli.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@sli.Value">@sli.Text</option>
+                            }
+                        }
+                    </select>
+                }
+
             </div>
             <div class="form-group">
                 <label class="control-label">Parameter Value</label>
@@ -36,17 +81,6 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    @*<script type="text/javascript">
-            $(".noWhiteSpaces").on("keyup", function (e) {
-                $(this).val($(this).val().toString().replace(" ", ""));
-            });
-            $(".noWhiteSpaces").on("keypress", function(e) {
-                if ((e.which === 48 || e.which === 49 || e.which === 50 || e.which === 51 || e.which === 52
-                    || e.which === 53 || e.which === 54 || e.which === 55 || e.which === 56 || e.which === 57)
-                    && !this.value.length)
-                        e.preventDefault();
-            });
-        </script>*@
     <script type="text/javascript">
         $(".noWhiteSpaces").on("keyup", function (e) {
             $(this).val($(this).val().toString().replace(" ", ""));
@@ -64,6 +98,11 @@
                 event.preventDefault();
                 return false;
             }
+        });
+    </script>
+    <script>
+        $(".combobox").select2({
+            tags: true
         });
     </script>
 }

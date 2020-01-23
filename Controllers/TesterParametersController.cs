@@ -26,6 +26,97 @@ namespace BuildSheets.Controllers
             _context = context;
             testerParametersRepository = testerParameters;
         }
+        public IActionResult MassEditing()
+        {
+            GetDeviceType devicetype = new GetDeviceType();
+            ViewData["ChangeTypeId"] = new SelectList(devicetype.ListofDevices(), "Id", "Name");
+            GetListOfDevices newdeviceList = new GetListOfDevices();
+            var listing = newdeviceList.GetListofDevices();
+
+
+            return View(listing);
+        }
+
+        [HttpPost]
+        public IActionResult MassEditing(ListOfDevices model, string ChangeTypeId, string param, string ParameterValue)
+        {
+            GetDeviceType getDeviceType = new GetDeviceType();
+            List<TesterParameter> deviceList = testerParametersRepository.Main(getDeviceType.ListofDevices().
+                Where(d => d.Id == Convert.ToInt32(ChangeTypeId)).FirstOrDefault()?.Name).ToList();
+
+            string[] parentChild = param.Split("|");
+            string parentParamerter = parentChild[0];
+            string childParamerter = parentChild[1];
+
+            foreach (TesterParameter devices in deviceList)
+            {
+                EditTesterParameter editTesterParameter = new EditTesterParameter();
+                editTesterParameter.Id = devices.Id;
+                editTesterParameter.ParameterName = parentParamerter;
+                editTesterParameter.Type = (TesterParameterCodeType)System.Enum.Parse(typeof(TesterParameterCodeType), parentParamerter);
+                editTesterParameter.ParameterValue = ParameterValue;
+                testerParametersRepository.Edit(childParamerter, string.Empty, editTesterParameter);
+            }
+
+            return MassEditing();
+        }
+        #region OLD
+        //public IActionResult MassEditing()
+        //{
+
+        //    List<SelectListItem> deviceList = Enum.GetValues(typeof(DeviceCategory)).Cast<DeviceCategory>().Select(v => new SelectListItem
+        //    {
+        //        Text = v.ToString(),
+        //        Value = ((int)v).ToString()
+        //    }).ToList();
+        //    return View(deviceList);
+        //}
+
+        //[HttpPost]
+        //public JsonResult LoadParameterList()
+        //{
+        //    SelectListGroup deviceGroup = new SelectListGroup() { Name = "Device Parameter" };
+        //    List<SelectListItem> deviceItemList = Enum.GetValues(typeof(DeviceParametersName)).Cast<DeviceParametersName>().
+        //        Select(v => new SelectList
+        //        {
+        //            Text = v.ToString(),
+        //            Value = ((int)v).ToString(),
+        //            Group = deviceGroup
+        //        }).ToList();
+
+        //    SelectListGroup firmGroup = new SelectListGroup() { Name = "Firmware Gates" };
+        //    List<SelectListItem> firmItemList = Enum.GetValues(typeof(FirmwareGatesName)).Cast<FirmwareGatesName>().Select(v => new SelectListItem
+        //    {
+        //        Text = v.ToString(),
+        //        Value = ((int)v).ToString(),
+        //        Group = firmGroup
+        //    }).ToList();
+
+        //    SelectListGroup modemGroup = new SelectListGroup() { Name = "Modem Include" };
+        //    List<SelectListItem> modemIncludeList = Enum.GetValues(typeof(ModemIncludeList)).Cast<ModemIncludeList>().Select(v => new SelectListItem
+        //    {
+        //        Text = v.ToString(),
+        //        Value = ((int)v).ToString(),
+        //        Group = modemGroup
+        //    }).ToList();
+
+        //    SelectListGroup modemExcludeGroup = new SelectListGroup() { Name = "Modem Exclude" };
+        //    List<SelectListItem> modemExcludeList = Enum.GetValues(typeof(ModemExcludeList)).Cast<ModemExcludeList>().Select(v => new SelectListItem
+        //    {
+        //        Text = v.ToString(),
+        //        Value = ((int)v).ToString(),
+        //        Group = modemExcludeGroup
+        //    }).ToList();
+
+        //    List<SelectListItem> GO7 = new List<SelectListItem>();
+        //    GO7.AddRange(deviceItemList);
+        //    GO7.AddRange(firmItemList);
+        //    GO7.AddRange(modemExcludeList);
+
+        //    return Json(GO7);
+        //}
+
+        #endregion
         public IActionResult Main(string name)
         {
             var testerParameter = testerParametersRepository.Main(name);
@@ -171,7 +262,78 @@ namespace BuildSheets.Controllers
                 Id = id,
                 Type = type
             };
-
+            if (type == TesterParameterCodeType.DeviceParameters)
+            {
+                var dropDownListForDeviceParam = new List<SelectListItem>();
+                dropDownListForDeviceParam.Add(new SelectListItem
+                {
+                    Text = "Please Select",
+                    Value = ""
+                });
+                foreach (DeviceParametersName paramName in Enum.GetValues(typeof(DeviceParametersName)))
+                {
+                    dropDownListForDeviceParam.Add(new SelectListItem
+                    {
+                        Text = Enum.GetName(typeof(DeviceParametersName), paramName),
+                        Value = paramName.ToString()
+                    });
+                }
+                ViewBag.DeviceParameterName = dropDownListForDeviceParam;
+            }
+            else if (type == TesterParameterCodeType.FirmwareGates)
+            {
+                var dropDownListForFirmwareGates = new List<SelectListItem>();
+                dropDownListForFirmwareGates.Add(new SelectListItem
+                {
+                    Text = "Please Select",
+                    Value = ""
+                });
+                foreach (FirmwareGatesName paramName in Enum.GetValues(typeof(FirmwareGatesName)))
+                {
+                    dropDownListForFirmwareGates.Add(new SelectListItem
+                    {
+                        Text = Enum.GetName(typeof(FirmwareGatesName), paramName),
+                        Value = paramName.ToString()
+                    });
+                }
+                ViewBag.FirmwareGatesName = dropDownListForFirmwareGates;
+            }
+            else if (type == TesterParameterCodeType.ModemIncludeList)
+            {
+                var dropDownListForModemInclude = new List<SelectListItem>();
+                dropDownListForModemInclude.Add(new SelectListItem
+                {
+                    Text = "Please Select",
+                    Value = ""
+                });
+                foreach (ModemIncludeList paramName in Enum.GetValues(typeof(ModemIncludeList)))
+                {
+                    dropDownListForModemInclude.Add(new SelectListItem
+                    {
+                        Text = Enum.GetName(typeof(ModemIncludeList), paramName),
+                        Value = paramName.ToString()
+                    });
+                }
+                ViewBag.ModemIncludeList = dropDownListForModemInclude;
+            }
+            else
+            {
+                var dropDownListForModemExclude = new List<SelectListItem>();
+                dropDownListForModemExclude.Add(new SelectListItem
+                {
+                    Text = "Please Select",
+                    Value = ""
+                });
+                foreach (ModemExcludeList paramName in Enum.GetValues(typeof(ModemExcludeList)))
+                {
+                    dropDownListForModemExclude.Add(new SelectListItem
+                    {
+                        Text = Enum.GetName(typeof(ModemExcludeList), paramName),
+                        Value = paramName.ToString()
+                    });
+                }
+                ViewBag.ModemExcludeList = dropDownListForModemExclude;
+            }
             ViewBag.DeviceName = product.DeviceName;
             return View(model);
         }

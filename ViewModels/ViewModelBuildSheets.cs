@@ -9,11 +9,11 @@ namespace BuildSheets.ViewModels
     public class ViewModelBuildSheets
     {
         public int Id { get; set; }
+        public BuildSheet BuildSheets { get; set; }
         public string APN { get; set; }
         public string CustomerGateway { get; set; }
-        public DeviceFirmware DeviceFirmware { get; set; }
         public Modem DeviceModem { get; set; }
-        public ICollection<Board> Boards { get; set; }
+        public ICollection<InternalSubAssemblyBoardBuildSheet> InternalSubAssemblyBoardsBuildSheets { get; set; }
         public ICollection<Hardware> Hardwares { get; set; }
         public ICollection<Insert> Inserts { get; set; }
         public ICollection<Label> Labels { get; set; }

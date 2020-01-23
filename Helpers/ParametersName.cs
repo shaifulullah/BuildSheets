@@ -5,6 +5,12 @@ using System.Threading.Tasks;
 
 namespace BuildSheets.Helpers
 {
+    public enum DeviceCategory
+    {
+        GO7,
+        GO8,
+        GO9
+    }
     public enum DeviceParametersName
     {
         P65,
@@ -20,5 +26,10 @@ namespace BuildSheets.Helpers
     {
         Modem,
         ModemFirmware
+    }
+
+    public enum ModemExcludeList
+    {
+        Modem
     }
 }

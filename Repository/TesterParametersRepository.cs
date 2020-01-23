@@ -113,7 +113,12 @@ namespace BuildSheets.Repository
 
             foreach (XmlElement node in parameterNode)
             {
-                if (node.InnerText == oldParameterValue)
+                if (string.IsNullOrEmpty(oldParameterValue))
+                {
+                    node.InnerText = parameterValue;
+                    break;
+                }
+                else if (node.InnerText == oldParameterValue)
                 {
                     node.InnerText = parameterValue;
                 }

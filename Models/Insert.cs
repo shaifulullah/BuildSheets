@@ -10,12 +10,13 @@ namespace BuildSheets.Models
         public string Id { get; set; }
         public int Rev { get; set; }
         public string Description { get; set; }
-        public virtual ICollection<InsertBuildSheet> InsertBuildSheets { get; set; }
+        public string URL { get; set; }
+        public virtual ICollection<InsertBuildsheet> InsertBuildSheets { get; set; }
     }
-    public class InsertBuildSheet
+    public class InsertBuildsheet
     {
         public string InsertId { get; set; }
-        public Insert Insert{ get; set; }
+        public Insert Insert { get; set; }
         public int BuildSheetId { get; set; }
         public BuildSheet BuildSheet { get; set; }
     }

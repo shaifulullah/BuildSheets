@@ -1,23 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace BuildSheets.Models
 {
-    public class Document
+    public class SubBoard
     {
+        [Key]
         public int Id { get; set; }
         public string Name { get; set; }
-        public string URL { get; set; }
         public string Rev { get; set; }
-        public DateTime RevDate { get; set; }
-        public virtual ICollection<DocumentBuildSheet> DocumentBuildSheets { get; set; }
+        public string URL { get; set; }
+        public virtual ICollection<SubBoardBuildSheet> SubBoardBuildSheets { get; set; }
     }
-    public class DocumentBuildSheet
+    public class SubBoardBuildSheet
     {
-        public int DocumentId { get; set; }
-        public Document Document { get; set; }
+        public int SubBoardBuildSheetId { get; set; }
+        public SubBoard SubBoard { get; set; }
         public int BuildSheetId { get; set; }
         public BuildSheet BuildSheet { get; set; }
     }
