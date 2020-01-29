@@ -41,6 +41,7 @@ namespace BuildSheets
             services.AddTransient<IBuildSheets, BuildSheetsRepository>();
             //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddMvc(option =>option.EnableEndpointRouting =false).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             
         }
 

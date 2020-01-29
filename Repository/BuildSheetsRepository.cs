@@ -24,7 +24,7 @@ namespace BuildSheets.Repository
             }
             return buildSheets;
         }
-        public BuildSheet Details(string name)
+        public BuildSheet Details(int? id)
         {
             var buildSheetDetails = _buildSheetsContext.BuildSheets
             .Include(b => b.BuildSheetsInternalSubAssemblyBoard)
@@ -35,6 +35,12 @@ namespace BuildSheets.Repository
             .ThenInclude(sb => sb.SubBoard)
             .Include(b => b.OtherHardwares)
             .ThenInclude(hw => hw.Hardware)
+            .Include(b => b.Inserts)
+            .ThenInclude(hw => hw.Insert)
+            .Include(l => l.Labels)
+            .ThenInclude(l => l.Label)
+            .Include(p => p.Packagings)
+            .ThenInclude(p => p.Packaging)
             .Include(sd => sd.Documents)
             .ThenInclude(d => d.Document)
             .Include(wi => wi.WorkInstructions)
@@ -47,7 +53,9 @@ namespace BuildSheets.Repository
             .ThenInclude(ts => ts.TesterSoftware)
             .Include(clr => clr.CertificationLabelRequirements)
             .ThenInclude(clr => clr.CertificationLabelRequirement)
-            .FirstOrDefault(b => b.ProductName.ToLower() == name.ToLower()); return buildSheetDetails;
+            .FirstOrDefault(b => b.Id == id);
+
+            return buildSheetDetails;
         }
     }
 }

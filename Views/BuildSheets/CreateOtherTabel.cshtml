@@ -1,0 +1,132 @@
+﻿
+@{
+    ViewData["Title"] = "CreateOtherTabel";
+}
+
+<h1>CreateOtherTabel</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group col-md-4">
+            <label class="control-label">Choose table</label>
+            <select id="TablesName">
+                <option value="baseBoard">Base Board</option>
+                <option value="subBoard">Sub Board</option>
+                <option>Other Hardware</option>
+                <option>Inserts</option>
+                <option>Support Document</option>
+                <option>Customer Gateway</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="form-group col-md-4 name">
+            <label class="control-label">Name</label>
+            <input type="text" id="Name" />
+        </div>
+        <div class="form-group col-md-4 nameUrl">
+            <label class="control-label">Name URL</label>
+            <input type="text" id="NameURL" />
+        </div>
+        <div class="form-group col-md-4 version">
+            <label class="control-label">Version</label>
+            <input type="text" id="Version" />
+        </div>
+        <div class="form-group col-md-4 versionUrl">
+            <label class="control-label">Version URL</label>
+            <input type="text" id="VersionURL" />
+        </div>
+        <div class="form-group col-md-4 quantity">
+            <label class="control-label">Quantity</label>
+            <input type="text" id="Quantity" />
+        </div>
+        <div class="form-group col-md-4 description">
+            <label class="control-label">Description</label>
+            <input type="text" id="Description" />
+        </div>
+        <div class="form-group col-md-4 date">
+            <label class="control-label">Date</label>
+            <input type="text" id="Date" />
+        </div>
+        <div class="form-group col-md-4">
+            <button onclick="OnAdd();">Add</button>
+        </div>
+    </div>
+    <div class="col-md-12 table-responsive">
+        <table class="table table-sm table-bordered" id="TablesDetails">
+        </table>
+    </div>
+</div>
+@section Scripts {
+        <script>
+            var BuildSheet = [];
+            $('#TablesName').change(function () {
+                var selectedTable = $(this).val();
+                setFieldsBasedOnTable(selectedTable);
+            });
+
+            function OnAdd() {
+                switch ($('#TablesName').val()) {
+                    case ('baseBoard'):
+                        var BaseBoard = {
+                            Name: $('#Name').val(),
+                            Rev: $('#Version').val(),
+                            URL: $('#NameURL').val()
+                        };
+                        BuildSheet.BaseBoards.push(BaseBoard);
+                        break;
+                    case ('subBoard'):
+                        var SubBoard = {
+                            Name: $('#Name').val(),
+                            Rev: $('#Version').val(),
+                            URL: $('#NameURL').val()
+                        };
+                        BuildSheet.SubBoards.push(SubBoard);
+                        break;
+                }
+                displayFieldsInput();
+            }
+
+            function displayFieldsInput() {
+                for (var i = 0; i < BuildSheet.length; i++) {
+                    var TableNam;
+                    var TableDet;
+                    if (BuildSheet.BaseBoards != undefined && BuildSheet.BaseBoards.length > 0) {
+                        TableNam = 'Base board';
+                        TableDet = BuildSheet.BaseBoards;
+                    }
+                    else if (BuildSheet.SubBoards != undefined && BuildSheet.SubBoards.length > 0) {
+                        TableNam = 'Sub board';
+                        TableDet = BuildSheet.SubBoards;
+                    }
+                    if (TableNam.length > 0) {
+                        var row$ = $('<tr/>');
+                        row$.append($('<td/>').html('<h4>' + TableNam + ':</h4>'));
+                        for (var i = 0; i < TableDet.length; i++) {
+                            var inRow$ = $('<tr />');
+                            inRow$.append($('<td/>').html(TableDet[i].Name));
+                            inRow$.append($('<td/>').html(TableDet[i].Version));
+                            inRow$.append($('<td/>').html(TableDet[i].Url));
+                        }
+                        row$.append($('<td/>').append('<table/>').append(inRow$));
+                        $('#TablesDetails').append(row$);
+                    }
+                }
+            }
+
+            function setFieldsBasedOnTable(tableName) {
+                switch (tableName) {
+                    case ('baseBoard'):
+                    case ('subBoard'):
+                        $('.name').removeClass('hide');
+                        $('.version').removeClass('hide');
+                        $('.nameUrl').removeClass('hide');
+                        break;
+                }
+            }
+
+            function disableAll() {
+                $('.form-group').addClass('hide');
+            }
+        </script>
+    }

@@ -1,0 +1,222 @@
+﻿@model BuildSheetsViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>Edit</h2>
+
+<form asp-action="Edit" asp-controller="BuildSheets" id="formCreate">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-3">
+                <label asp-for="ProductName" class="control-label"></label>
+                <input type="text" asp-for="ProductName" class="form-control" />
+                <span asp-validation-for="ProductName" class="text-danger"></span>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="Description" class="control-label"></label>
+                <input type="text" asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="ProductOwner" class="control-label"></label>
+                <input type="text" asp-for="ProductOwner" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label asp-for="ProductLaunchDate" class="control-label"></label>
+                <input asp-for="ProductLaunchDate" type="date" class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="col-md-3">
+                <label asp-for="ProductImageURL" class="control-label"></label>
+                <input type="text" asp-for="ProductImageURL" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label asp-for="ProvisioningPackage" class="control-label"></label>
+                <input type="text" asp-for="ProvisioningPackage" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label asp-for="Revision" class="control-label"></label>
+                <input type="text" asp-for="Revision" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label asp-for="RevisionURL" class="control-label"></label>
+                <input type="text" asp-for="RevisionURL" class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="col-md-3">
+                <label asp-for="ProductStatus" class="control-label"></label>
+                <select asp-for="ProductStatus" class="form-control" asp-items="Html.GetEnumSelectList(typeof(ProductStatus))"> </select>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="APN" class="control-label"></label>
+                <input type="text" asp-for="APN" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label asp-for="CustomerGateway" class="control-label"></label>
+                <input type="text" asp-for="CustomerGateway" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label asp-for="ECOId" class="control-label"></label>
+                <input type="text" asp-for="ECOId" class="form-control" />
+            </div>
+        </div>
+
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="InternalSubAssemblyBoardList"></label>
+                    <select asp-items="Model.InternalSubAssemblyBoardList" asp-for="InternalSubAssemblyBoardId"
+                            class="form-control selectList"> </select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="BaseBoardList" class="control-label"></label>
+                    <select asp-for="BaseBoardId" asp-items="Model.BaseBoardList" class="form-control selectList"></select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="SubBoardList" class="control-label"></label>
+                    <select asp-for="SubBoardId" asp-items="Model.SubBoardList" class="form-control selectList"></select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="OtherHardwareList" class="control-label"></label>
+                    <select asp-for="OtherHardwareIds" asp-items="Model.OtherHardwareList" class="form-control selectList"></select>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="InsertList"></label>
+                    <select asp-items="Model.InsertList" asp-for="InsertIds"
+                            class="form-control selectList"> </select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="LabelList" class="control-label"></label>
+                    <select asp-for="LabelIds" asp-items="Model.LabelList" class="form-control selectList"></select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="PackagingList" class="control-label"></label>
+                    <select asp-for="PackagingIds" asp-items="Model.PackagingList" class="form-control selectList"></select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="DocumentList" class="control-label"></label>
+                    <select asp-for="DocumentIds" asp-items="Model.DocumentList" class="form-control selectList"></select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="WorkInstructionList" class="control-label"></label>
+                    <select asp-for="WorkInstructionIds" asp-items="Model.WorkInstructionList" class="form-control selectList"></select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="GeotabAssemblyDrawingList" class="control-label"></label>
+                    <select asp-for="GeotabAssemblyDrawingIds" asp-items="Model.GeotabAssemblyDrawingList" class="form-control selectList"></select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="ContractManufactureAssemblyDrawingList" class="control-label"></label>
+                    <select asp-for="ContractManufactureAssemblyDrawingIds" asp-items="Model.ContractManufactureAssemblyDrawingList" class="form-control selectList"></select>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="TesterSoftwareList" class="control-label"></label>
+                    <select asp-for="TesterSoftwareIds" asp-items="Model.TesterSoftwareList" class="form-control selectList"></select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="CertificationLabelRequirementList" class="control-label"></label>
+                    <select asp-for="CertificationLabelRequirementIds" asp-items="Model.CertificationLabelRequirementList" class="form-control selectList"></select>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group hidden">
+                <input type="hidden" asp-for="Id" />
+                <input class="form-control" type="text" asp-for="UpdatedBy" value="@ViewBag.loggedInUser" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label class="control-label">&nbsp;</label>
+                <a asp-action="Index" asp-controller="BuildSheets" class="btn btn-block btn-default">Back to Home</a>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label class="control-label">&nbsp;</label>
+                <input type="submit" value="Save" class="btn btn-block btn-success" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(".selectList").select2({
+            placeholder: 'Select an Option',
+            width: 'element',
+            allowClear: true
+        });
+    </script>
+}
+

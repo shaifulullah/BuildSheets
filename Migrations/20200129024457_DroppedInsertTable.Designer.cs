@@ -4,14 +4,16 @@ using BuildSheets.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BuildSheets.Migrations
 {
     [DbContext(typeof(BuildSheetsDBContext))]
-    partial class BuildSheetsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20200129024457_DroppedInsertTable")]
+    partial class DroppedInsertTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -233,8 +235,6 @@ namespace BuildSheets.Migrations
 
                     b.Property<string>("Rev");
 
-                    b.Property<string>("URL");
-
                     b.HasKey("Id");
 
                     b.ToTable("Hardwares");
@@ -251,38 +251,6 @@ namespace BuildSheets.Migrations
                     b.HasIndex("BuildSheetId");
 
                     b.ToTable("HardwareBuildSheets");
-                });
-
-            modelBuilder.Entity("BuildSheets.Models.Insert", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("Rev");
-
-                    b.Property<string>("URL");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Inserts");
-                });
-
-            modelBuilder.Entity("BuildSheets.Models.InsertBuildsheet", b =>
-                {
-                    b.Property<int>("InsertId");
-
-                    b.Property<int>("BuildSheetId");
-
-                    b.HasKey("InsertId", "BuildSheetId");
-
-                    b.HasIndex("BuildSheetId");
-
-                    b.ToTable("InsertBuildsheets");
                 });
 
             modelBuilder.Entity("BuildSheets.Models.InternalSubAssemblyBoard", b =>
@@ -562,19 +530,6 @@ namespace BuildSheets.Migrations
                     b.HasOne("BuildSheets.Models.Hardware", "Hardware")
                         .WithMany("HardwareBuildSheets")
                         .HasForeignKey("HardwareId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("BuildSheets.Models.InsertBuildsheet", b =>
-                {
-                    b.HasOne("BuildSheets.Models.BuildSheet", "BuildSheet")
-                        .WithMany("Inserts")
-                        .HasForeignKey("BuildSheetId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("BuildSheets.Models.Insert", "Insert")
-                        .WithMany("InsertBuildSheets")
-                        .HasForeignKey("InsertId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

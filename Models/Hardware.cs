@@ -13,6 +13,7 @@ namespace BuildSheets.Models
         public string Name{ get; set; }
         public string Rev { get; set; }
         public string Description { get; set; }
+        public string URL { get; set; }
         public virtual ICollection<HardwareBuildSheet> HardwareBuildSheets{ get; set; }
     }
     public class HardwareBuildSheet

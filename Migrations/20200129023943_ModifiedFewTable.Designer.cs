@@ -4,14 +4,16 @@ using BuildSheets.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BuildSheets.Migrations
 {
     [DbContext(typeof(BuildSheetsDBContext))]
-    partial class BuildSheetsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20200129023943_ModifiedFewTable")]
+    partial class ModifiedFewTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -233,8 +235,6 @@ namespace BuildSheets.Migrations
 
                     b.Property<string>("Rev");
 
-                    b.Property<string>("URL");
-
                     b.HasKey("Id");
 
                     b.ToTable("Hardwares");
@@ -255,15 +255,12 @@ namespace BuildSheets.Migrations
 
             modelBuilder.Entity("BuildSheets.Models.Insert", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Description");
 
-                    b.Property<string>("Name");
-
-                    b.Property<string>("Rev");
+                    b.Property<int>("Rev");
 
                     b.Property<string>("URL");
 
@@ -274,7 +271,7 @@ namespace BuildSheets.Migrations
 
             modelBuilder.Entity("BuildSheets.Models.InsertBuildsheet", b =>
                 {
-                    b.Property<int>("InsertId");
+                    b.Property<string>("InsertId");
 
                     b.Property<int>("BuildSheetId");
 

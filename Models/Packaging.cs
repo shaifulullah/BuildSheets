@@ -9,8 +9,9 @@ namespace BuildSheets.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int Rev { get; set; }
+        public string Rev { get; set; }
         public string Description { get; set; }
+        public string URL { get; set; }
         public virtual ICollection<PackagingBuildSheet> PackagingBuildSheets { get; set; }
     }
     public class PackagingBuildSheet
