@@ -9,18 +9,19 @@ namespace BuildSheets.Models
     public class Hardware
     {
         [Key]
-        public int Id{ get; set; }
-        public string Name{ get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
         public string Rev { get; set; }
         public string Description { get; set; }
         public string URL { get; set; }
-        public virtual ICollection<HardwareBuildSheet> HardwareBuildSheets{ get; set; }
+        public virtual ICollection<HardwareBuildSheet> HardwareBuildSheets { get; set; }
     }
     public class HardwareBuildSheet
     {
         public int HardwareId { get; set; }
-        public Hardware Hardware{ get; set; }
+        public Hardware Hardware { get; set; }
         public int BuildSheetId { get; set; }
         public BuildSheet BuildSheet { get; set; }
+        public string Quantity { get; set; }
     }
 }

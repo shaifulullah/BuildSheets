@@ -9,6 +9,6 @@ namespace BuildSheets.Services
     public interface IBuildSheets
     {
         IEnumerable<BuildSheet> Main(string name);
-        BuildSheet Details(int? id);
+        BuildSheet Details(int? Id);
     }
 }

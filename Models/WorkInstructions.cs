@@ -12,6 +12,7 @@ namespace BuildSheets.Models
         public string Rev { get; set; }
         public string URL { get; set; }
         public virtual ICollection<WorkInstructionBuildSheet> WorkInstructionBuildSheets { get; set; }
+
     }
     public class WorkInstructionBuildSheet
     {

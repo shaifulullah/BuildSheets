@@ -95,10 +95,6 @@ namespace BuildSheets.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("FCC");
-
-                    b.Property<string>("IC");
-
                     b.Property<string>("SideA");
 
                     b.Property<string>("SideADescription");
@@ -127,6 +123,34 @@ namespace BuildSheets.Migrations
                     b.HasIndex("BuildSheetId");
 
                     b.ToTable("CertificationLabelRequirementBuildSheets");
+                });
+
+            modelBuilder.Entity("BuildSheets.Models.CertificationType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("TypeofCertificate");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CertificationTypes");
+                });
+
+            modelBuilder.Entity("BuildSheets.Models.CertificationTypeBuildSheet", b =>
+                {
+                    b.Property<int>("CertificationTypeId");
+
+                    b.Property<int>("BuildSheetId");
+
+                    b.HasKey("CertificationTypeId", "BuildSheetId");
+
+                    b.HasIndex("BuildSheetId");
+
+                    b.ToTable("CertificationTypeBuildSheets");
                 });
 
             modelBuilder.Entity("BuildSheets.Models.ContractManufactureAssemblyDrawing", b =>
@@ -246,6 +270,8 @@ namespace BuildSheets.Migrations
 
                     b.Property<int>("BuildSheetId");
 
+                    b.Property<string>("Quantity");
+
                     b.HasKey("HardwareId", "BuildSheetId");
 
                     b.HasIndex("BuildSheetId");
@@ -277,6 +303,8 @@ namespace BuildSheets.Migrations
                     b.Property<int>("InsertId");
 
                     b.Property<int>("BuildSheetId");
+
+                    b.Property<string>("Quantity");
 
                     b.HasKey("InsertId", "BuildSheetId");
 
@@ -340,6 +368,8 @@ namespace BuildSheets.Migrations
 
                     b.Property<int>("BuildSheetId");
 
+                    b.Property<string>("Quantity");
+
                     b.HasKey("LabelId", "BuildSheetId");
 
                     b.HasIndex("BuildSheetId");
@@ -371,6 +401,8 @@ namespace BuildSheets.Migrations
                     b.Property<int>("PackagingId");
 
                     b.Property<int>("BuildSheetId");
+
+                    b.Property<string>("Quantity");
 
                     b.HasKey("PackagingId", "BuildSheetId");
 
@@ -510,6 +542,19 @@ namespace BuildSheets.Migrations
                     b.HasOne("BuildSheets.Models.CertificationLabelRequirement", "CertificationLabelRequirement")
                         .WithMany("CertificationLabelRequirementBuildSheets")
                         .HasForeignKey("CertificationLabelRequirementId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("BuildSheets.Models.CertificationTypeBuildSheet", b =>
+                {
+                    b.HasOne("BuildSheets.Models.BuildSheet", "BuildSheet")
+                        .WithMany("CertificationTypes")
+                        .HasForeignKey("BuildSheetId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("BuildSheets.Models.CertificationType", "CertificationType")
+                        .WithMany("CertificationTypeBuildSheets")
+                        .HasForeignKey("CertificationTypeId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

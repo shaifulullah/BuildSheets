@@ -75,7 +75,7 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <label asp-for="InternalSubAssemblyBoardList"></label>
-                    <select asp-items="Model.InternalSubAssemblyBoardList" asp-for="InternalSubAssemblyBoardId"
+                    <select asp-items="Model.InternalSubAssemblyBoardList" name="InternalSubAssemblyBoardId"
                             class="form-control selectList"> </select>
                 </div>
             </div>
@@ -83,21 +83,20 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <label asp-for="BaseBoardList" class="control-label"></label>
-                    <select asp-for="BaseBoardId" asp-items="Model.BaseBoardList" class="form-control selectList"></select>
+                    <select name="BaseBoardId" asp-items="Model.BaseBoardList" class="form-control selectList"></select>
                 </div>
             </div>
 
             <div class="col-md-3">
                 <div class="form-group">
                     <label asp-for="SubBoardList" class="control-label"></label>
-                    <select asp-for="SubBoardId" asp-items="Model.SubBoardList" class="form-control selectList"></select>
+                    <select name="SubBoardId" asp-items="Model.SubBoardList" class="form-control selectList"></select>
                 </div>
             </div>
 
             <div class="col-md-3">
                 <div class="form-group">
-                    <label asp-for="OtherHardwareList" class="control-label"></label>
-                    <select asp-for="OtherHardwareIds" asp-items="Model.OtherHardwareList" class="form-control selectList"></select>
+
                 </div>
             </div>
         </div>
@@ -106,25 +105,180 @@
 
     <div class="row">
         <div class="col-md-12">
+            <label>Other Hardwares (Please press enter after complete typing each field) </label>
+            <br />
+            <label id="hwValidationMsg" class="control-label text-danger"></label>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <select id="hwName" asp-items="Model.OtherHardwareSelectList" name="OtherHardwaresDictonary" class="form-control selectList"> </select>
+
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <input type="url" id="hwQuantity" class="form-control" placeholder="Enter Quantity" title="example: 1, 2 etc or 1/2, 2/3 etc" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-group list-inline" id="hwRepresentation">
+                        @{
+                            if (Model != null)
+                            {
+                                foreach (var link in Model.OtherHardwaresDictonary)
+                                { //this will display the links already in the database, using the LinkUrls column
+                                    <li class="list-group-item">
+                                        <span name="@link.Value" class="linkSpan">@link.Value : </span>
+                                        <span name="@link.Key" class="linkSpan">@link.Key </span>
+                                        @*<a href="@link.Value" target="_blank">@link.Value</a>*@
+                                        <i class="glyphicon glyphicon-remove" onclick="removeInput(this)"></i>
+                                        <input name="OtherHardwaresDictonary[@link.Key]" type="hidden" value="@link.Value" />
+                                    </li>
+                                }
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <label>Inserts (Please press enter after complete typing each field) </label>
+            <br />
+            <label id="insertValidationMsg" class="control-label text-danger"></label>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <select id="insertName" asp-items="Model.InsertSelectList" name="InsertsDictonary" class="form-control selectList"> </select>
+
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <input type="url" id="insertQuantity" class="form-control" placeholder="Enter Quantity" title="example: 1, 2 etc or 1/2, 2/3 etc" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-group list-inline" id="insertRepresentation">
+                        @{
+                            if (Model != null)
+                            {
+                                foreach (var insert in Model.InsertsDictonary)
+                                { //this will display the links already in the database, using the LinkUrls column
+                                    <li class="list-group-item">
+                                        <span name="@insert.Value" class="linkSpan">@insert.Value : </span>
+                                        <span name="@insert.Key" class="linkSpan">@insert.Key </span>
+                                        <i class="glyphicon glyphicon-remove" onclick="removeInput(this)"></i>
+                                        <input name="InsertsDictonary[@insert.Key]" type="hidden" value="@insert.Value" />
+                                    </li>
+                                }
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <label>Labels (Please press enter after complete typing each field)</label>
+            <br />
+            <label id="labelValidationMsg" class="control-label text-danger"></label>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <select id="labelName" asp-items="Model.LabelSelectList" name="LabelsDictonary" class="form-control selectList"> </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <input type="text" id="labelQuantity" class="form-control" placeholder="Enter Quantity" title="example: 1, 2 etc or 1/2, 2/3 etc" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-group list-inline" id="labelRepresentation">
+                        @{
+                            if (Model != null)
+                            {
+                                foreach (var label in Model.LabelsDictonary)
+                                { //this will display the links already in the database, using the LinkUrls column
+                                    <li class="list-group-item">
+                                        <span name="@label.Value" class="linkSpan">@label.Value : </span>
+                                        <span name="@label.Key" class="linkSpan">@label.Key </span>
+                                        <i class="glyphicon glyphicon-remove" onclick="removeInput(this)"></i>
+                                        <input name="LabelsDictonary[@label.Key]" type="hidden" value="@label.Value" />
+                                    </li>
+                                }
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <label>Packaging (Please press enter after complete typing each field)</label>
+            <br />
+            <label id="PackagingValidationMsg" class="control-label text-danger"></label>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <select id="PackagingName" asp-items="Model.PackagingSelectList" name="PackagingsDictonary" class="form-control selectList"> </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <input type="text" id="PackagingQuantity" class="form-control" placeholder="Enter Quantity" title="example: 1, 2 etc or 1/2, 2/3 etc" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-group list-inline" id="PackagingRepresentation">
+                        @{
+                            if (Model != null)
+                            {
+                                foreach (var packaging in Model.PackagingsDictonary)
+                                { //this will display the links already in the database, using the LinkUrls column
+                                    <li class="list-group-item">
+                                        <span name="@packaging.Value" class="linkSpan">@packaging.Value : </span>
+                                        <span name="@packaging.Key" class="linkSpan">@packaging.Key </span>
+                                        <i class="glyphicon glyphicon-remove" onclick="removeInput(this)"></i>
+                                        <input name="PackagingsDictonary[@packaging.Key]" type="hidden" value="@packaging.Value" />
+                                    </li>
+                                }
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
             <div class="col-md-3">
                 <div class="form-group">
-                    <label asp-for="InsertList"></label>
-                    <select asp-items="Model.InsertList" asp-for="InsertIds"
-                            class="form-control selectList"> </select>
+                    @*<label asp-for="InsertList"></label>
+                        <select asp-items="Model.InsertList" asp-for="InsertIds"
+                                class="form-control selectList"> </select>*@
                 </div>
             </div>
 
             <div class="col-md-3">
                 <div class="form-group">
-                    <label asp-for="LabelList" class="control-label"></label>
-                    <select asp-for="LabelIds" asp-items="Model.LabelList" class="form-control selectList"></select>
+                    @*<label asp-for="LabelList" class="control-label"></label>
+                        <select asp-for="LabelIds" asp-items="Model.LabelList" class="form-control selectList"></select>*@
                 </div>
             </div>
 
             <div class="col-md-3">
                 <div class="form-group">
-                    <label asp-for="PackagingList" class="control-label"></label>
-                    <select asp-for="PackagingIds" asp-items="Model.PackagingList" class="form-control selectList"></select>
+                    @*<label asp-for="PackagingList" class="control-label"></label>
+                        <select asp-for="PackagingIds" asp-items="Model.PackagingList" class="form-control selectList"></select>*@
                 </div>
             </div>
 
@@ -164,6 +318,7 @@
                 </div>
             </div>
         </div>
+
         <div class="col-md-12">
             <div class="col-md-3">
                 <div class="form-group">
@@ -174,7 +329,14 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <label asp-for="CertificationLabelRequirementList" class="control-label"></label>
-                    <select asp-for="CertificationLabelRequirementIds" asp-items="Model.CertificationLabelRequirementList" class="form-control selectList"></select>
+                    <select name="CertificationLabelRequirementIds" asp-items="Model.CertificationLabelRequirementList" class="form-control selectList"></select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="TypeofCertificateList" class="control-label"></label>
+                    <select name="TypeofCertificateIds" asp-items="Model.TypeofCertificateList" class="form-control selectList" multiple="multiple"></select>
                 </div>
             </div>
         </div>
@@ -196,7 +358,7 @@
         <div class="col-md-2">
             <div class="form-group">
                 <label class="control-label">&nbsp;</label>
-                <a asp-action="Index" asp-controller="BuildSheets" class="btn btn-block btn-default">Back to Home</a>
+                <a asp-action="Main" asp-controller="BuildSheets" class="btn btn-block btn-default">Back to Home</a>
             </div>
         </div>
         <div class="col-md-2">
@@ -211,12 +373,4 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-    <script>
-        $(".selectList").select2({
-            placeholder: 'Select an Option',
-            width: 'element',
-            allowClear: true
-        });
-    </script>
 }
-

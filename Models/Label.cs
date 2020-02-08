@@ -7,8 +7,8 @@ namespace BuildSheets.Models
 {
     public class Label
     {
-        public int Id{ get; set; }
-        public string Name{ get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
         public string Rev { get; set; }
         public string Description { get; set; }
         public string URL { get; set; }
@@ -17,8 +17,9 @@ namespace BuildSheets.Models
     public class LabelBuildSheet
     {
         public int LabelId { get; set; }
-        public Label Label{ get; set; }
+        public Label Label { get; set; }
         public int BuildSheetId { get; set; }
         public BuildSheet BuildSheet { get; set; }
+        public string Quantity { get; set; }
     }
 }

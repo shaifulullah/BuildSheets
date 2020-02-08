@@ -17,8 +17,9 @@ namespace BuildSheets.Models
     public class PackagingBuildSheet
     {
         public int PackagingId { get; set; }
-        public Packaging Packaging{ get; set; }
+        public Packaging Packaging { get; set; }
         public int BuildSheetId { get; set; }
         public BuildSheet BuildSheet { get; set; }
+        public string Quantity { get; set; }
     }
 }

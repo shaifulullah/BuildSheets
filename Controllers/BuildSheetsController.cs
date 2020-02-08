@@ -46,6 +46,7 @@ namespace BuildSheets.Controllers
 
             var internalSubAssebly = _context.InternalSubAssemblyBoards.ToList();
             List<SelectListItem> items = new List<SelectListItem>();
+
             foreach (var item in internalSubAssebly)
             {
                 items.Add(new SelectListItem()
@@ -188,109 +189,164 @@ namespace BuildSheets.Controllers
             return _context.HardwareBuildSheets.Where(e => e.BuildSheetId == BuildSheetId);
         }
 
-        public SelectList SetInsertList(BuildSheetsViewModel vm)
+        public Dictionary<string, string> SetHardwareNameandQuantity(BuildSheetsViewModel vm)
         {
-            List<Insert> inserts = _context.Inserts.ToList();
-            List<SelectListItem> items = new List<SelectListItem>();
-            foreach (var item in inserts)
+            Dictionary<string, string> hardwareNameandQuantity = new Dictionary<string, string>();
+            var hardwareList = _context.HardwareBuildSheets.Where(b => b.BuildSheetId == vm.Id).ToList();
+
+            foreach (var hardware in hardwareList)
             {
-                items.Add(new SelectListItem()
+                var hardwareDetails = _context.Hardwares.Where(h => h.Id == hardware.HardwareId).FirstOrDefault();
+                string hardwareName = hardwareDetails.Name + "/" + hardwareDetails.Rev;
+                var hardwareQuantity = hardware.Quantity;
+                hardwareNameandQuantity.Add(hardwareName, hardwareQuantity);
+            }
+            return hardwareNameandQuantity;
+        }
+
+        public Dictionary<string, string> SetInsertNameandQuantity(BuildSheetsViewModel vm)
+        {
+            Dictionary<string, string> insertNameandQuantity = new Dictionary<string, string>();
+            var insertList = _context.InsertBuildsheets.Where(b => b.BuildSheetId == vm.Id).ToList();
+
+            foreach (var insert in insertList)
+            {
+                var insertDetails = _context.Inserts.Where(h => h.Id == insert.InsertId).FirstOrDefault();
+                string insertName = insertDetails.Name + "/" + insertDetails.Rev;
+                var insertQuantity = insert.Quantity;
+
+                insertNameandQuantity.Add(insertName, insertQuantity);
+            }
+
+            return insertNameandQuantity;
+        }
+
+        public Dictionary<string, string> SetLabelNameandQuantity(BuildSheetsViewModel vm)
+        {
+            Dictionary<string, string> labelNameandQuantity = new Dictionary<string, string>();
+            var labelList = _context.LabelBuildSheets.Where(b => b.BuildSheetId == vm.Id).ToList();
+
+            foreach (var label in labelList)
+            {
+                var labelDetails = _context.Labels.Where(h => h.Id == label.LabelId).FirstOrDefault();
+                string labelName = labelDetails.Name + "/" + labelDetails.Rev;
+                var labelQuantity = label.Quantity;
+
+                labelNameandQuantity.Add(labelName, labelQuantity);
+            }
+
+            return labelNameandQuantity;
+        }
+
+        public Dictionary<string, string> SetPackagingNameandQuantity(BuildSheetsViewModel vm)
+        {
+            Dictionary<string, string> packagingNameandQuantity = new Dictionary<string, string>();
+            var packagingList = _context.PackagingBuildSheets.Where(b => b.BuildSheetId == vm.Id).ToList();
+
+            foreach (var packaging in packagingList)
+            {
+                var packagingDetails = _context.Packagings.Where(h => h.Id == packaging.PackagingId).FirstOrDefault();
+                string packagingName = packagingDetails.Name + "/" + packagingDetails.Rev;
+                var packagingQuantity = packaging.Quantity;
+
+                packagingNameandQuantity.Add(packagingName, packagingQuantity);
+            }
+
+            return packagingNameandQuantity;
+        }
+
+        public SelectList SetOtherHardwareSelectList()
+        {
+            var hardwareList = _context.Hardwares.ToList();
+            List<SelectListItem> hardwares = new List<SelectListItem>();
+            hardwares.Add(new SelectListItem
+            {
+                Text = "",
+                Value = ""
+            });
+            for (int i = 0; i < hardwareList.Count; i++)
+            {
+                Hardware hw = hardwareList[i];
+
+                hardwares.Add(new SelectListItem
                 {
-                    Text = item.Name + " - " + item.Rev,
-                    Value = item.Id.ToString(),
+                    Text = hw.Name + " - " + "Rev " + hw.Rev,
+                    Value = hw.Name + "/" + hw.Rev,
                 });
             }
-            SelectList ddl = new SelectList(items, "Value", "Text", null);
-            IEnumerable<InsertBuildsheet> relatedInserts = GetRelatedInsertsByBS(vm.Id);
-
-            if (relatedInserts != null)
-            {
-                foreach (var relatedInsert in relatedInserts)
-                {
-                    var a = ddl.GetEnumerator();
-                    while (a.MoveNext())
-                    {
-                        if (Convert.ToInt64(a.Current.Value) == relatedInsert.InsertId)
-                        {
-                            a.Current.Selected = true;
-                        }
-                    }
-                }
-            }
-            return ddl;
-        }
-        public IEnumerable<InsertBuildsheet> GetRelatedInsertsByBS(int BuildSheetId)
-        {
-            return _context.InsertBuildsheets.Where(e => e.BuildSheetId == BuildSheetId);
+            var returnItem = new SelectList(hardwares, "Value", "Text", -1);
+            return returnItem;
         }
 
-        public SelectList SetLabelList(BuildSheetsViewModel vm)
+        public SelectList SetInsertSelectList()
         {
-            List<Label> labels = _context.Labels.ToList();
-            List<SelectListItem> items = new List<SelectListItem>();
-            foreach (var item in labels)
+            var insertList = _context.Inserts.ToList();
+            List<SelectListItem> inserts = new List<SelectListItem>();
+            inserts.Add(new SelectListItem
             {
-                items.Add(new SelectListItem()
+                Text = "",
+                Value = ""
+            });
+            for (int i = 0; i < insertList.Count; i++)
+            {
+                Insert insert = insertList[i];
+
+                inserts.Add(new SelectListItem
                 {
-                    Text = item.Name + " - " + item.Rev,
-                    Value = item.Id.ToString(),
+                    Text = insert.Name + " - " + "Rev " + insert.Rev,
+                    Value = insert.Name + "/" + insert.Rev,
                 });
             }
-            SelectList ddl = new SelectList(items, "Value", "Text", null);
-            IEnumerable<LabelBuildSheet> relatedLabels = GetRelatedLabelsByBS(vm.Id);
-
-            if (relatedLabels != null)
-            {
-                foreach (var relatedLabel in relatedLabels)
-                {
-                    var a = ddl.GetEnumerator();
-                    while (a.MoveNext())
-                    {
-                        if (Convert.ToInt64(a.Current.Value) == relatedLabel.LabelId)
-                        {
-                            a.Current.Selected = true;
-                        }
-                    }
-                }
-            }
-            return ddl;
-        }
-        public IEnumerable<LabelBuildSheet> GetRelatedLabelsByBS(int BuildSheetId)
-        {
-            return _context.LabelBuildSheets.Where(e => e.BuildSheetId == BuildSheetId);
+            var returnItem = new SelectList(inserts, "Value", "Text", -1);
+            return returnItem;
         }
 
-        public SelectList SetPackagingList(BuildSheetsViewModel vm)
+        public SelectList SetLabelSelectList()
         {
-            List<Packaging> packagings = _context.Packagings.ToList();
-            List<SelectListItem> items = new List<SelectListItem>();
-            foreach (var item in packagings)
+            var labelList = _context.Labels.ToList();
+            List<SelectListItem> labels = new List<SelectListItem>();
+            labels.Add(new SelectListItem
             {
-                items.Add(new SelectListItem()
+                Text = "",
+                Value = ""
+            });
+            for (int i = 0; i < labelList.Count; i++)
+            {
+                Label label = labelList[i];
+
+                labels.Add(new SelectListItem
                 {
-                    Text = item.Name + " - " + item.Rev,
-                    Value = item.Id.ToString(),
+                    Text = label.Name + " - " + "Rev " + label.Rev,
+                    Value = label.Name + "/" + label.Rev,
                 });
             }
-            SelectList ddl = new SelectList(items, "Value", "Text", null);
-            IEnumerable<PackagingBuildSheet> relatedPackages = GetRelatedPackagingByBS(vm.Id);
-
-            if (relatedPackages != null)
-            {
-                foreach (var relatedPackage in relatedPackages)
-                {
-                    var a = ddl.GetEnumerator();
-                    while (a.MoveNext())
-                    {
-                        if (Convert.ToInt64(a.Current.Value) == relatedPackage.PackagingId)
-                        {
-                            a.Current.Selected = true;
-                        }
-                    }
-                }
-            }
-            return ddl;
+            var returnItem = new SelectList(labels, "Value", "Text", -1);
+            return returnItem;
         }
+
+        public SelectList SetPackagingSelectList()
+        {
+            var packagingList = _context.Packagings.ToList();
+            List<SelectListItem> packagings = new List<SelectListItem>();
+            packagings.Add(new SelectListItem
+            {
+                Text = "",
+                Value = ""
+            });
+            for (int i = 0; i < packagingList.Count; i++)
+            {
+                Packaging packaging = packagingList[i];
+
+                packagings.Add(new SelectListItem
+                {
+                    Text = packaging.Name + " - " + "Rev " + packaging.Rev,
+                    Value = packaging.Name + "/" + packaging.Rev,
+                });
+            }
+            var returnItem = new SelectList(packagings, "Value", "Text", -1);
+            return returnItem;
+        }
+
         public IEnumerable<PackagingBuildSheet> GetRelatedPackagingByBS(int BuildSheetId)
         {
             return _context.PackagingBuildSheets.Where(e => e.BuildSheetId == BuildSheetId);
@@ -485,7 +541,7 @@ namespace BuildSheets.Controllers
             {
                 items.Add(new SelectListItem()
                 {
-                    Text = item.SideADescription + " - " + item.SideBDescription,
+                    Text = "Side A -" + item.SideADescription + "; Side B - " + item.SideBDescription,
                     Value = item.Id.ToString(),
                 });
             }
@@ -512,9 +568,51 @@ namespace BuildSheets.Controllers
         {
             return _context.CertificationLabelRequirementBuildSheets.Where(e => e.BuildSheetId == BuildSheetId);
         }
+
+        public SelectList SetCertificateList(BuildSheetsViewModel vm)
+        {
+            List<CertificationType> certificationTypeList = _context.CertificationTypes.ToList();
+            List<SelectListItem> items = new List<SelectListItem>();
+            foreach (var item in certificationTypeList)
+            {
+                SelectListGroup group = new SelectListGroup() { Name = item.TypeofCertificate };
+                items.Add(new SelectListItem()
+                {
+                    Text = item.Description,
+                    Value = item.Id.ToString(),
+                    Group = group
+                });
+            }
+            SelectList ddl = new SelectList(items, "Value", "Text", null, "Group.Name");
+
+            IEnumerable<CertificationTypeBuildSheet> relatedCertificationType = GetRelatedCertificationTypeByBS(vm.Id);
+
+            if (relatedCertificationType != null)
+            {
+                foreach (var relatedCertification in relatedCertificationType)
+                {
+                    var a = ddl.GetEnumerator();
+                    while (a.MoveNext())
+                    {
+                        if (Convert.ToInt64(a.Current.Value) == relatedCertification.CertificationTypeId)
+                        {
+                            a.Current.Selected = true;
+                        }
+                    }
+                }
+            }
+            return ddl;
+        }
+
+        public IEnumerable<CertificationTypeBuildSheet> GetRelatedCertificationTypeByBS(int BuildSheetId)
+        {
+            return _context.CertificationTypeBuildSheets.Where(e => e.BuildSheetId == BuildSheetId);
+        }
         #endregion
 
         #region Set Middle Tables
+
+
         public List<InternalSubAssemblyBoardBuildSheet> SetInternalSubAssemblyBoard(List<int> InternalSubAssemblyBoardIds, int BuildSheetId)
         {
             List<InternalSubAssemblyBoardBuildSheet> returnList = new List<InternalSubAssemblyBoardBuildSheet>();
@@ -607,17 +705,28 @@ namespace BuildSheets.Controllers
             return _context.SubBoardBuildSheets.Where(e => e.SubBoardBuildSheetId == subBoardId && e.BuildSheetId == BuildSheetId).FirstOrDefault();
         }
 
-        public List<HardwareBuildSheet> SetHardware(List<int> HardwaredIds, int BuildSheetId)
+        public List<HardwareBuildSheet> SetOtherHardwareBuildSheet(Dictionary<string, string> HardwareNameandQuantities, int BuildSheetId)
         {
             List<HardwareBuildSheet> returnList = new List<HardwareBuildSheet>();
-            if (HardwaredIds != null)
+            if (HardwareNameandQuantities != null)
             {
-                foreach (var hardwareId in HardwaredIds)
+                foreach (var hardwareNameandQuantity in HardwareNameandQuantities)
                 {
+                    var HwNameAndRev = hardwareNameandQuantity.Key;
+                    var hwnr = HwNameAndRev.Split("/");
+                    var hardwareName = hwnr[0];
+                    var hardwareRev = hwnr[1];
+                    var hardwareId = _context.Hardwares.Where(h => h.Name.Equals(hardwareName) && h.Rev.Equals(hardwareRev)).Select(h => h.Id).FirstOrDefault();
+                    var hwQuantity = hardwareNameandQuantity.Value;
+
                     var hardware = GetRecordByBsandHWId(hardwareId, BuildSheetId);
 
                     if (hardware != null)
                     {
+                        hardware.BuildSheetId = BuildSheetId;
+                        hardware.HardwareId = hardwareId;
+                        hardware.Quantity = hwQuantity;
+
                         returnList.Add(hardware);
                     }
                     else
@@ -625,7 +734,8 @@ namespace BuildSheets.Controllers
                         HardwareBuildSheet hb = new HardwareBuildSheet()
                         {
                             BuildSheetId = BuildSheetId,
-                            HardwareId = hardwareId
+                            HardwareId = hardwareId,
+                            Quantity = hwQuantity
                         };
                         returnList.Add(hb);
                     }
@@ -637,28 +747,39 @@ namespace BuildSheets.Controllers
         {
             return _context.HardwareBuildSheets.Where(e => e.HardwareId == hardwareId && e.BuildSheetId == BuildSheetId).FirstOrDefault();
         }
-
-        public List<InsertBuildsheet> SetInsert(List<int> InsertIds, int BuildSheetId)
+        public List<InsertBuildsheet> SetInsertBuildSheet(Dictionary<string, string> InsertNameandQuantities, int BuildSheetId)
         {
             List<InsertBuildsheet> returnList = new List<InsertBuildsheet>();
-            if (InsertIds != null)
+            if (InsertNameandQuantities != null)
             {
-                foreach (var insertId in InsertIds)
+                foreach (var insertNameandQuantity in InsertNameandQuantities)
                 {
+                    var insertNameAndRev = insertNameandQuantity.Key;
+                    var insertnr = insertNameAndRev.Split("/");
+                    var insertName = insertnr[0];
+                    var insertRev = insertnr[1];
+                    var insertId = _context.Inserts.Where(h => h.Name.Equals(insertName) && h.Rev.Equals(insertRev)).Select(h => h.Id).FirstOrDefault();
+                    var insertQuantity = insertNameandQuantity.Value;
+
                     var insert = GetRecordByBsandInsertId(insertId, BuildSheetId);
 
                     if (insert != null)
                     {
+                        insert.BuildSheetId = BuildSheetId;
+                        insert.InsertId = insertId;
+                        insert.Quantity = insertQuantity;
+
                         returnList.Add(insert);
                     }
                     else
                     {
-                        InsertBuildsheet hb = new InsertBuildsheet()
+                        InsertBuildsheet ib = new InsertBuildsheet()
                         {
                             BuildSheetId = BuildSheetId,
-                            InsertId = insertId
+                            InsertId = insertId,
+                            Quantity = insertQuantity
                         };
-                        returnList.Add(hb);
+                        returnList.Add(ib);
                     }
                 }
             }
@@ -669,27 +790,41 @@ namespace BuildSheets.Controllers
             return _context.InsertBuildsheets.Where(e => e.InsertId == insertId && e.BuildSheetId == BuildSheetId).FirstOrDefault();
         }
 
-        public List<LabelBuildSheet> SetLabel(List<int> LabelIds, int BuildSheetId)
+        public List<LabelBuildSheet> SetLabelBuildSheet(Dictionary<string, string> LabelNameandQuantities, int BuildSheetId)
         {
             List<LabelBuildSheet> returnList = new List<LabelBuildSheet>();
-            if (LabelIds != null)
+
+            if (LabelNameandQuantities != null)
             {
-                foreach (var labelId in LabelIds)
+                foreach (var labelNameandQuantity in LabelNameandQuantities)
                 {
+                    var labelNameAndRev = labelNameandQuantity.Key;
+                    var labelnr = labelNameAndRev.Split("/");
+                    var labelName = labelnr[0];
+                    var labelRev = labelnr[1];
+                    var labelId = _context.Labels.Where(h => h.Name.Equals(labelName) && h.Rev.Equals(labelRev)).Select(h => h.Id).FirstOrDefault();
+                    var labelQuantity = labelNameandQuantity.Value;
+
+
                     var label = GetRecordByBsandLabelId(labelId, BuildSheetId);
 
                     if (label != null)
                     {
+                        label.BuildSheetId = BuildSheetId;
+                        label.LabelId = labelId;
+                        label.Quantity = labelQuantity;
+
                         returnList.Add(label);
                     }
                     else
                     {
-                        LabelBuildSheet hb = new LabelBuildSheet()
+                        LabelBuildSheet lb = new LabelBuildSheet()
                         {
                             BuildSheetId = BuildSheetId,
-                            LabelId = labelId
+                            LabelId = labelId,
+                            Quantity = labelQuantity
                         };
-                        returnList.Add(hb);
+                        returnList.Add(lb);
                     }
                 }
             }
@@ -700,17 +835,27 @@ namespace BuildSheets.Controllers
             return _context.LabelBuildSheets.Where(e => e.LabelId == labelId && e.BuildSheetId == BuildSheetId).FirstOrDefault();
         }
 
-        public List<PackagingBuildSheet> SetPackaging(List<int> PackagingIds, int BuildSheetId)
+        public List<PackagingBuildSheet> SetPackagingBuildSheet(Dictionary<string, string> PackagingNameandQuantities, int BuildSheetId)
         {
             List<PackagingBuildSheet> returnList = new List<PackagingBuildSheet>();
-            if (PackagingIds != null)
+            if (PackagingNameandQuantities != null)
             {
-                foreach (var packagingId in PackagingIds)
+                foreach (var packagingNameandQuantity in PackagingNameandQuantities)
                 {
+                    var packagingNameAndRev = packagingNameandQuantity.Key;
+                    var packagingnr = packagingNameAndRev.Split("/");
+                    var packagingName = packagingnr[0];
+                    var packagingRev = packagingnr[1];
+                    var packagingId = _context.Packagings.Where(h => h.Name.Equals(packagingName) && h.Rev.Equals(packagingRev)).Select(h => h.Id).FirstOrDefault();
+                    var packagingQuantity = packagingNameandQuantity.Value;
+
                     var packaging = GetRecordByBsandPackagingId(packagingId, BuildSheetId);
 
                     if (packaging != null)
                     {
+                        packaging.BuildSheetId = BuildSheetId;
+                        packaging.PackagingId = packagingId;
+                        packaging.Quantity = packagingQuantity;
                         returnList.Add(packaging);
                     }
                     else
@@ -718,7 +863,8 @@ namespace BuildSheets.Controllers
                         PackagingBuildSheet hb = new PackagingBuildSheet()
                         {
                             BuildSheetId = BuildSheetId,
-                            PackagingId = packagingId
+                            PackagingId = packagingId,
+                            Quantity = packagingQuantity
                         };
                         returnList.Add(hb);
                     }
@@ -916,6 +1062,37 @@ namespace BuildSheets.Controllers
         {
             return _context.CertificationLabelRequirementBuildSheets.Where(e => e.CertificationLabelRequirementId == certId && e.BuildSheetId == BuildSheetId).FirstOrDefault();
         }
+
+        public List<CertificationTypeBuildSheet> SetCertificationType(List<int> certIds, int BuildSheetId)
+        {
+            List<CertificationTypeBuildSheet> returnList = new List<CertificationTypeBuildSheet>();
+            if (certIds != null)
+            {
+                foreach (var certId in certIds)
+                {
+                    var certificate = GetRecordByBsandCertificationId(certId, BuildSheetId);
+
+                    if (certificate != null)
+                    {
+                        returnList.Add(certificate);
+                    }
+                    else
+                    {
+                        CertificationTypeBuildSheet dr = new CertificationTypeBuildSheet()
+                        {
+                            BuildSheetId = BuildSheetId,
+                            CertificationTypeId = certId
+                        };
+                        returnList.Add(dr);
+                    }
+                }
+            }
+            return returnList;
+        }
+        public CertificationTypeBuildSheet GetRecordByBsandCertificationId(int certId, int BuildSheetId)
+        {
+            return _context.CertificationTypeBuildSheets.Where(e => e.CertificationTypeId == certId && e.BuildSheetId == BuildSheetId).FirstOrDefault();
+        }
         #endregion
 
         #region Set ViewModel
@@ -925,6 +1102,11 @@ namespace BuildSheets.Controllers
 
             var internalSubAssemblyBoardList = _context.InternalSubAssemblyBoards.ToList();
             List<SelectListItem> isabs = new List<SelectListItem>();
+            isabs.Add(new SelectListItem
+            {
+                Text = "",
+                Value = ""
+            });
             for (int i = 0; i < internalSubAssemblyBoardList.Count; i++)
             {
                 InternalSubAssemblyBoard isab = internalSubAssemblyBoardList[i];
@@ -940,6 +1122,11 @@ namespace BuildSheets.Controllers
 
             var baseBoardList = _context.BaseBoards.ToList();
             List<SelectListItem> baseBoards = new List<SelectListItem>();
+            baseBoards.Add(new SelectListItem
+            {
+                Text = "",
+                Value = ""
+            });
             for (int i = 0; i < baseBoardList.Count; i++)
             {
                 BaseBoard bb = baseBoardList[i];
@@ -956,6 +1143,11 @@ namespace BuildSheets.Controllers
 
             var subBoardList = _context.BaseBoards.ToList();
             List<SelectListItem> subBoards = new List<SelectListItem>();
+            subBoards.Add(new SelectListItem
+            {
+                Text = "",
+                Value = ""
+            });
             for (int i = 0; i < subBoardList.Count; i++)
             {
                 BaseBoard sb = subBoardList[i];
@@ -969,24 +1161,34 @@ namespace BuildSheets.Controllers
             }
             vm.SubBoardList = new SelectList(subBoards, "Value", "Text", -1);
 
+
             var otherHardwareList = _context.Hardwares.ToList();
-            List<SelectListItem> otherHardwars = new List<SelectListItem>();
+            List<SelectListItem> otherHardwares = new List<SelectListItem>();
+            otherHardwares.Add(new SelectListItem
+            {
+                Text = "",
+                Value = ""
+            });
             for (int i = 0; i < otherHardwareList.Count; i++)
             {
                 Hardware hw = otherHardwareList[i];
 
-                otherHardwars.Add(new SelectListItem
+                otherHardwares.Add(new SelectListItem
                 {
                     Text = hw.Name + " - " + "Rev " + hw.Rev,
-                    Value = hw.Id.ToString(),
-                    //Group = new SelectListGroup { Name = "Sub Board" }
+                    Value = hw.Name + "/" + hw.Rev,
                 });
             }
-            vm.OtherHardwareList = new SelectList(otherHardwars, "Value", "Text", -1);
+            vm.OtherHardwareSelectList = new SelectList(otherHardwares, "Value", "Text", -1);
 
 
             var insertList = _context.Inserts.ToList();
             List<SelectListItem> inserts = new List<SelectListItem>();
+            inserts.Add(new SelectListItem
+            {
+                Text = "",
+                Value = ""
+            });
             for (int i = 0; i < insertList.Count; i++)
             {
                 Insert ins = insertList[i];
@@ -994,31 +1196,39 @@ namespace BuildSheets.Controllers
                 inserts.Add(new SelectListItem
                 {
                     Text = ins.Name + " - " + "Rev " + ins.Rev,
-                    Value = ins.Id.ToString(),
-                    //Group = new SelectListGroup { Name = "Sub Board" }
+                    Value = ins.Name + "/" + ins.Rev,
                 });
             }
-            vm.InsertList = new SelectList(inserts, "Value", "Text", -1);
+            vm.InsertSelectList = new SelectList(inserts, "Value", "Text", -1);
 
 
             var labelList = _context.Labels.ToList();
             List<SelectListItem> labels = new List<SelectListItem>();
+            labels.Add(new SelectListItem
+            {
+                Text = "",
+                Value = ""
+            });
             for (int i = 0; i < labelList.Count; i++)
             {
-                Label ins = labelList[i];
+                Label label = labelList[i];
 
                 labels.Add(new SelectListItem
                 {
-                    Text = ins.Name + " - " + "Rev " + ins.Rev,
-                    Value = ins.Id.ToString(),
-                    //Group = new SelectListGroup { Name = "Sub Board" }
+                    Text = label.Name + " - " + "Rev " + label.Rev,
+                    Value = label.Name + "/" + label.Rev,
                 });
             }
-            vm.LabelList = new SelectList(labels, "Value", "Text", -1);
+            vm.LabelSelectList = new SelectList(labels, "Value", "Text", -1);
 
 
             var packagingList = _context.Packagings.ToList();
             List<SelectListItem> packagings = new List<SelectListItem>();
+            packagings.Add(new SelectListItem
+            {
+                Text = "",
+                Value = ""
+            });
             for (int i = 0; i < packagingList.Count; i++)
             {
                 Packaging pak = packagingList[i];
@@ -1026,11 +1236,10 @@ namespace BuildSheets.Controllers
                 packagings.Add(new SelectListItem
                 {
                     Text = pak.Name + " - " + "Rev " + pak.Rev,
-                    Value = pak.Id.ToString(),
-                    //Group = new SelectListGroup { Name = "Sub Board" }
+                    Value = pak.Name + "/" + pak.Rev,
                 });
             }
-            vm.PackagingList = new SelectList(packagings, "Value", "Text", -1);
+            vm.PackagingSelectList = new SelectList(packagings, "Value", "Text", -1);
 
             var documentList = _context.Documents.ToList();
             List<SelectListItem> documents = new List<SelectListItem>();
@@ -1114,26 +1323,58 @@ namespace BuildSheets.Controllers
             var certificationLabelRequirementList = _context.CertificationLabelRequirements.ToList();
             List<SelectListItem> certificationLabelRequirements = new List<SelectListItem>();
 
+            certificationLabelRequirements.Add(new SelectListItem
+            {
+                Text = "",
+                Value = "",
+            });
             for (int i = 0; i < certificationLabelRequirementList.Count; i++)
             {
                 CertificationLabelRequirement clr = certificationLabelRequirementList[i];
 
                 certificationLabelRequirements.Add(new SelectListItem
                 {
-                    Text = clr.SideADescription + " - " + clr.SideBDescription,
+                    Text = "Side A -" + clr.SideADescription + "; Side B - " + clr.SideBDescription,
                     Value = clr.Id.ToString(),
                     //Group = new SelectListGroup { Name = "Certification Label Requirement" }
                 });
             }
             vm.CertificationLabelRequirementList = new SelectList(certificationLabelRequirements, "Value", "Text", -1);
 
+
+
+            //CertificationType certificationType = new CertificationType() { Id = 1, TypeofCertificate = "FCC", Description = "FCC Descrition1" };
+            //CertificationType certificationType1 = new CertificationType() { Id = 2, TypeofCertificate = "IC", Description = "IC Descrition1" };
+            //List<CertificationType> certificationTypeList = new List<CertificationType>();
+            //certificationTypeList.Add(certificationType);
+            //certificationTypeList.Add(certificationType1);
+
+            var certificationTypeList = _context.CertificationTypes.ToList();
+            List<SelectListItem> items = new List<SelectListItem>();
+
+            foreach (var item in certificationTypeList)
+            {
+                SelectListGroup group = new SelectListGroup() { Name = item.TypeofCertificate };
+                items.Add(new SelectListItem()
+                {
+                    Text = item.Description,
+                    Value = item.Id.ToString(),
+                    Group = group
+                });
+            }
+            vm.TypeofCertificateList = new SelectList(items, "Value", "Text", null, "Group.Name");
+
             return (vm);
+
+
         }
         #endregion
+
+
         #endregion
 
         // GET: BuildSheetsArea/BuildSheets
-        public IActionResult Index(string name)
+        public IActionResult Main(string name)
         {
             var buildSheet = buildSheetsRepository.Main(name);
             if (!string.IsNullOrWhiteSpace(name) && buildSheet == null)
@@ -1160,6 +1401,7 @@ namespace BuildSheets.Controllers
         public IActionResult Create()
         {
             ViewData["loggedInUser"] = GetLoggedInUsername();
+
             BuildSheetsViewModel vm = setViewModel();
             return View(vm);
         }
@@ -1169,8 +1411,13 @@ namespace BuildSheets.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(BuildSheetsViewModel Vm)
+        public async Task<IActionResult> Create([Bind("ProductName,Description,ProductOwner,ProductLaunchDate,ProvisioningPackage,ProductStatus,"+
+            "Revision,RevisionURL,UpdatedBy,ProductUpdatedOn,APN,CustomerGateway,ECOId,ProductImageURL,InternalSubAssemblyBoardId,BaseBoardId,"+
+            "SubBoardId,OtherHardwaresDictonary,InsertsDictonary,LabelsDictonary,PackagingsDictonary,DocumentIds,WorkInstructionIds,"+
+            "GeotabAssemblyDrawingIds,ContractManufactureAssemblyDrawingIds,TesterSoftwareIds,"+
+            "CertificationLabelRequirementIds,TypeofCertificateIds")] BuildSheetsViewModel Vm)
         {
+            int buildSheetId = 0;
             if (ModelState.IsValid)
             {
                 try
@@ -1179,8 +1426,7 @@ namespace BuildSheets.Controllers
                     _context.Add(NewBs);
                     await _context.SaveChangesAsync();
 
-
-                    int buildSheetId = NewBs.Id;
+                    buildSheetId = NewBs.Id;
 
                     if (Vm.InternalSubAssemblyBoardId != null)
                     {
@@ -1197,24 +1443,25 @@ namespace BuildSheets.Controllers
                         List<SubBoardBuildSheet> subBoardBuildSheet = SetSubBoard(Vm.SubBoardId, buildSheetId);
                         NewBs.SubBoards = subBoardBuildSheet;
                     }
-                    if (Vm.OtherHardwareIds != null)
+
+                    if (Vm.OtherHardwaresDictonary.Count > 0)
                     {
-                        List<HardwareBuildSheet> hardwareBuildSheet = SetHardware(Vm.OtherHardwareIds, buildSheetId);
-                        NewBs.OtherHardwares = hardwareBuildSheet;
+                        List<HardwareBuildSheet> otherHardwareBuildSheet = SetOtherHardwareBuildSheet(Vm.OtherHardwaresDictonary, buildSheetId);
+                        NewBs.OtherHardwares = otherHardwareBuildSheet.ToList();
                     }
-                    if (Vm.InsertIds != null)
+                    if (Vm.InsertsDictonary.Count > 0)
                     {
-                        List<InsertBuildsheet> insertBuildsheet = SetInsert(Vm.InsertIds, buildSheetId);
+                        List<InsertBuildsheet> insertBuildsheet = SetInsertBuildSheet(Vm.InsertsDictonary, buildSheetId);
                         NewBs.Inserts = insertBuildsheet;
                     }
-                    if (Vm.LabelIds != null)
+                    if (Vm.LabelsDictonary.Count > 0)
                     {
-                        List<LabelBuildSheet> labelBuildSheet = SetLabel(Vm.LabelIds, buildSheetId);
+                        List<LabelBuildSheet> labelBuildSheet = SetLabelBuildSheet(Vm.LabelsDictonary, buildSheetId);
                         NewBs.Labels = labelBuildSheet;
                     }
-                    if (Vm.PackagingIds != null)
+                    if (Vm.PackagingsDictonary.Count > 0)
                     {
-                        List<PackagingBuildSheet> packagingBuildSheet = SetPackaging(Vm.PackagingIds, buildSheetId);
+                        List<PackagingBuildSheet> packagingBuildSheet = SetPackagingBuildSheet(Vm.PackagingsDictonary, buildSheetId);
                         NewBs.Packagings = packagingBuildSheet;
                     }
                     if (Vm.DocumentIds != null)
@@ -1247,7 +1494,11 @@ namespace BuildSheets.Controllers
                         List<CertificationLabelRequirementBuildSheet> certificationLabelRequirementBuildSheet = SetCertlableReq(Vm.CertificationLabelRequirementIds, buildSheetId);
                         NewBs.CertificationLabelRequirements = certificationLabelRequirementBuildSheet;
                     }
-
+                    if (Vm.TypeofCertificateIds != null)
+                    {
+                        List<CertificationTypeBuildSheet> certificationTypeBuildSheet = SetCertificationType(Vm.TypeofCertificateIds, buildSheetId);
+                        NewBs.CertificationTypes = certificationTypeBuildSheet;
+                    }
                     await _context.SaveChangesAsync();
                 }
                 catch (Exception ex)
@@ -1256,7 +1507,7 @@ namespace BuildSheets.Controllers
                     throw;
                 }
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", new { id = buildSheetId });
         }
 
         // GET: BuildSheetsArea/BuildSheets/Edit/5
@@ -1281,6 +1532,7 @@ namespace BuildSheets.Controllers
                 .Include(cm => cm.ContractManufactureAssemblyDrawings).ThenInclude(cm => cm.ContractManufactureAssemblyDrawing)
                 .Include(ts => ts.TesterSoftwares).ThenInclude(ts => ts.TesterSoftware)
                 .Include(clr => clr.CertificationLabelRequirements).ThenInclude(clr => clr.CertificationLabelRequirement)
+                .Include(tc => tc.CertificationTypes).ThenInclude(tc => tc.CertificationType)
                 .FirstOrDefault(b => b.Id == id);
 
             if (buildSheet == null)
@@ -1293,16 +1545,21 @@ namespace BuildSheets.Controllers
             vm.InternalSubAssemblyBoardList = SetInternalSubAssemblyBoardSelectList(vm);
             vm.BaseBoardList = SetbaseBoardSelectList(vm);
             vm.SubBoardList = SetSubBoardSelectList(vm);
-            vm.OtherHardwareList = SetHardwareList(vm);
-            vm.InsertList = SetInsertList(vm);
-            vm.LabelList = SetLabelList(vm);
-            vm.PackagingList = SetPackagingList(vm);
+            vm.OtherHardwaresDictonary = SetHardwareNameandQuantity(vm);
+            vm.OtherHardwareSelectList = SetOtherHardwareSelectList();
+            vm.InsertsDictonary = SetInsertNameandQuantity(vm);
+            vm.InsertSelectList = SetInsertSelectList();
+            vm.LabelsDictonary = SetLabelNameandQuantity(vm);
+            vm.LabelSelectList = SetLabelSelectList();
+            vm.PackagingsDictonary = SetPackagingNameandQuantity(vm);
+            vm.PackagingSelectList = SetPackagingSelectList();
             vm.DocumentList = SetDocumentList(vm);
             vm.WorkInstructionList = SetWIList(vm);
             vm.GeotabAssemblyDrawingList = SetGeotabAssDrawingList(vm);
             vm.ContractManufactureAssemblyDrawingList = SetCMDrawingList(vm);
             vm.TesterSoftwareList = SetTesterSoftwareList(vm);
             vm.CertificationLabelRequirementList = SetCLrequirementList(vm);
+            vm.TypeofCertificateList = SetCertificateList(vm);
 
 
             return View(vm);
@@ -1313,7 +1570,11 @@ namespace BuildSheets.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, BuildSheetsViewModel vm)
+        public async Task<IActionResult> Edit([Bind("Id,ProductName,Description,ProductOwner,ProductLaunchDate,ProvisioningPackage,ProductStatus,"+
+            "Revision,RevisionURL,UpdatedBy,ProductUpdatedOn,APN,CustomerGateway,ECOId,ProductImageURL,InternalSubAssemblyBoardId,LinkUrls,"+
+            "BaseBoardId,SubBoardId,OtherHardwaresDictonary,InsertsDictonary,LabelsDictonary,PackagingsDictonary,DocumentIds,"+
+            "WorkInstructionIds,GeotabAssemblyDrawingIds,ContractManufactureAssemblyDrawingIds,TesterSoftwareIds,"+
+            "CertificationLabelRequirementIds,TypeofCertificateIds")] BuildSheetsViewModel vm, int id)
         {
             if (id != vm.Id)
             {
@@ -1337,6 +1598,7 @@ namespace BuildSheets.Controllers
                        .Include(cm => cm.ContractManufactureAssemblyDrawings).ThenInclude(cm => cm.ContractManufactureAssemblyDrawing)
                        .Include(ts => ts.TesterSoftwares).ThenInclude(ts => ts.TesterSoftware)
                        .Include(clr => clr.CertificationLabelRequirements).ThenInclude(clr => clr.CertificationLabelRequirement)
+                       .Include(tc => tc.CertificationTypes).ThenInclude(tc => tc.CertificationType)
                        .FirstOrDefault(b => b.Id == id);
 
 
@@ -1345,7 +1607,7 @@ namespace BuildSheets.Controllers
                     existingBuildSheet.Description = vm.Description;
                     existingBuildSheet.APN = vm.APN;
                     existingBuildSheet.CustomerGateway = vm.CustomerGateway;
-                    existingBuildSheet.UpdatedBy = vm.UpdatedBy;
+                    existingBuildSheet.UpdatedBy = GetLoggedInUsername();
                     existingBuildSheet.ProductUpdatedOn = vm.ProductUpdatedOn;
                     existingBuildSheet.ECOId = vm.ECOId;
                     existingBuildSheet.ProductLaunchDate = vm.ProductLaunchDate;
@@ -1358,16 +1620,17 @@ namespace BuildSheets.Controllers
                     existingBuildSheet.BuildSheetsInternalSubAssemblyBoard = SetInternalSubAssemblyBoard(vm.InternalSubAssemblyBoardId, existingBuildSheet.Id);
                     existingBuildSheet.BaseBoards = SetBaseBoard(vm.BaseBoardId, existingBuildSheet.Id);
                     existingBuildSheet.SubBoards = SetSubBoard(vm.SubBoardId, existingBuildSheet.Id);
-                    existingBuildSheet.OtherHardwares = SetHardware(vm.OtherHardwareIds, existingBuildSheet.Id);
-                    existingBuildSheet.Inserts = SetInsert(vm.InsertIds, existingBuildSheet.Id);
-                    existingBuildSheet.Labels = SetLabel(vm.LabelIds, existingBuildSheet.Id);
-                    existingBuildSheet.Packagings = SetPackaging(vm.PackagingIds, existingBuildSheet.Id);
+                    existingBuildSheet.OtherHardwares = SetOtherHardwareBuildSheet(vm.OtherHardwaresDictonary, existingBuildSheet.Id);
+                    existingBuildSheet.Inserts = SetInsertBuildSheet(vm.InsertsDictonary, existingBuildSheet.Id);
+                    existingBuildSheet.Labels = SetLabelBuildSheet(vm.LabelsDictonary, existingBuildSheet.Id);
+                    existingBuildSheet.Packagings = SetPackagingBuildSheet(vm.PackagingsDictonary, existingBuildSheet.Id);
                     existingBuildSheet.Documents = SetDocument(vm.DocumentIds, existingBuildSheet.Id);
                     existingBuildSheet.WorkInstructions = SetWorkInstruction(vm.WorkInstructionIds, existingBuildSheet.Id);
                     existingBuildSheet.GeotabAssemblyDrawings = SetGeotabAssDrawing(vm.GeotabAssemblyDrawingIds, existingBuildSheet.Id);
                     existingBuildSheet.ContractManufactureAssemblyDrawings = SetContractAssDrawing(vm.ContractManufactureAssemblyDrawingIds, existingBuildSheet.Id);
                     existingBuildSheet.TesterSoftwares = SetSoftware(vm.TesterSoftwareIds, existingBuildSheet.Id);
                     existingBuildSheet.CertificationLabelRequirements = SetCertlableReq(vm.CertificationLabelRequirementIds, existingBuildSheet.Id);
+                    existingBuildSheet.CertificationTypes = SetCertificationType(vm.TypeofCertificateIds, existingBuildSheet.Id);
 
                     _context.Update(existingBuildSheet);
                     await _context.SaveChangesAsync();
@@ -1406,7 +1669,7 @@ namespace BuildSheets.Controllers
             var buildSheet = await _context.BuildSheets.FindAsync(id);
             _context.BuildSheets.Remove(buildSheet);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Main));
         }
 
         private bool BuildSheetExists(int id)

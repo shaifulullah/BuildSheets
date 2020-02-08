@@ -14,8 +14,6 @@ namespace BuildSheets.Models
         public string SideB { get; set; }
         public string SideBDescription { get; set; }
         public string SideBURL { get; set; }
-        public string FCC { get; set; }
-        public string IC { get; set; }
         public virtual ICollection<CertificationLabelRequirementBuildSheet> CertificationLabelRequirementBuildSheets { get; set; }
     }
     public class CertificationLabelRequirementBuildSheet

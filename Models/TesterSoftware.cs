@@ -12,7 +12,7 @@ namespace BuildSheets.Models
         public string ProductCodeURL { get; set; }
         public string TesterVersion { get; set; }
         public string TesterVersionURL { get; set; }
-        public virtual ICollection<TesterSoftwareBuildsheet> TesterSoftwareBuildsheets{ get; set; }
+        public virtual ICollection<TesterSoftwareBuildsheet> TesterSoftwareBuildsheets { get; set; }
     }
     public class TesterSoftwareBuildsheet
     {

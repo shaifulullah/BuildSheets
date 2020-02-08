@@ -4,11 +4,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <h3>Search Build Sheet</h3>
-<form asp-controller="BuildSheets" asp-action="Index" method="get" value=@ViewBag.SearchString>
+<form asp-controller="BuildSheets" asp-action="Main" method="get" value=@ViewBag.SearchString>
     <div class="row">
         <div class="col-md-3">
             <input type="text" name="name" class="form-control" />
-        </div>        <div class="col-md-2">
+        </div>
+
+        <div class="col-md-2">
             <input type="submit" value="Search" class="btn btn-info" />
             <a asp-controller="BuildSheets" asp-action="Create" class="btn btn-primary" style="margin-left: 15px;">Create</a>
         </div>
@@ -41,7 +43,7 @@
                     @if (Model != null)
                     {
                         @foreach (var buildSheet in Model)
-                    {
+                        {
                             <tr>
                                 <td>
                                     <a asp-controller="BuildSheets" asp-action="Details" asp-route-id="@buildSheet.Id" asp-route-name="@buildSheet.ProductName">@buildSheet.ProductName</a>
@@ -50,8 +52,9 @@
                                     @buildSheet.Description
                                 </td>
                             </tr>
+                        }
                     }
-                    }               
+
                 </tbody>
             </table>
         </div>

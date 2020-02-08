@@ -11,7 +11,9 @@ namespace BuildSheets.ViewModels
     public class BuildSheetsViewModel
     {
         public BuildSheetsViewModel()
-        { }
+        {
+
+        }
         public BuildSheetsViewModel(Models.BuildSheet bs)
         {
             Id = bs.Id;
@@ -29,6 +31,7 @@ namespace BuildSheets.ViewModels
             APN = bs.APN;
             CustomerGateway = bs.CustomerGateway;
             ProductImageURL = bs.ProductImageURL;
+
         }
         public int Id { get; set; }
         [Display(Name = "Product Name"), Required]
@@ -55,57 +58,80 @@ namespace BuildSheets.ViewModels
         public string CustomerGateway { get; set; }
         [Display(Name = "Product Image Link")]
         public string ProductImageURL { get; set; }
+
         [Display(Name = "Internal Sub Assembly Board")]
         public SelectList InternalSubAssemblyBoardList { get; set; }
         public List<int> InternalSubAssemblyBoardId { get; set; }
         public virtual ICollection<InternalSubAssemblyBoardBuildSheet> BuildSheetsInternalSubAssemblyBoard { get; set; }
+
+
         [Display(Name = "Base Board", GroupName = "Hardware")]
         public SelectList BaseBoardList { get; set; }
         public List<int> BaseBoardId { get; set; }
         public virtual ICollection<BaseBoardBuildSheet> BaseBoards { get; set; }
+
         [Display(Name = "Sub Board 1", GroupName = "Hardware")]
         public SelectList SubBoardList { get; set; }
         public List<int> SubBoardId { get; set; }
         public virtual ICollection<SubBoardBuildSheet> SubBoards { get; set; }
+
         [Display(Name = "Other Hardware", GroupName = "Hardware")]
-        public SelectList OtherHardwareList { get; set; }
-        public List<int> OtherHardwareIds { get; set; }
+        public SelectList OtherHardwareSelectList { get; set; }
+        public Dictionary<string, string> OtherHardwaresDictonary { get; set; }
         public virtual ICollection<HardwareBuildSheet> OtherHardwares { get; set; }
+
+
         [Display(Name = "Inserts", GroupName = "Hardware")]
-        public SelectList InsertList { get; set; }
-        public List<int> InsertIds { get; set; }
+        public SelectList InsertSelectList { get; set; }
+        public Dictionary<string, string> InsertsDictonary { get; set; }
         public virtual ICollection<InsertBuildsheet> Inserts { get; set; }
+
+
         [Display(Name = "Labels", GroupName = "Hardware")]
-        public SelectList LabelList { get; set; }
-        public List<int> LabelIds { get; set; }
+        public SelectList LabelSelectList { get; set; }
+        public Dictionary<string, string> LabelsDictonary { get; set; }
         public virtual ICollection<LabelBuildSheet> Labels { get; set; }
+
         [Display(Name = "Packaging", GroupName = "Hardware")]
-        public SelectList PackagingList { get; set; }
-        public List<int> PackagingIds { get; set; }
+        public SelectList PackagingSelectList { get; set; }
+        public Dictionary<string, string> PackagingsDictonary { get; set; }
         public virtual ICollection<PackagingBuildSheet> Packagings { get; set; }
+
         [Display(Name = "Support Document", GroupName = "Software")]
         public SelectList DocumentList { get; set; }
         public List<int> DocumentIds { get; set; }
         public virtual ICollection<DocumentBuildSheet> Documents { get; set; }
+
         [Display(Name = "Work Instructions", GroupName = "Software")]
         public SelectList WorkInstructionList { get; set; }
         public List<int> WorkInstructionIds { get; set; }
         public virtual ICollection<WorkInstructionBuildSheet> WorkInstructions { get; set; }
+
         [Display(Name = "Geotab Assembly Drawings", GroupName = "Software")]
         public SelectList GeotabAssemblyDrawingList { get; set; }
         public List<int> GeotabAssemblyDrawingIds { get; set; }
         public virtual ICollection<GeotabAssemblyDrawingBuildSheet> GeotabAssemblyDrawings { get; set; }
+
         [Display(Name = "Contract Manufacture Assembly Drawings", GroupName = "Software")]
         public SelectList ContractManufactureAssemblyDrawingList { get; set; }
         public List<int> ContractManufactureAssemblyDrawingIds { get; set; }
         public virtual ICollection<ContractManufactureAssemblyDrawingBuildSheet> ContractManufactureAssemblyDrawings { get; set; }
+
         [Display(Name = "Tester Software", GroupName = "Software")]
         public SelectList TesterSoftwareList { get; set; }
         public List<int> TesterSoftwareIds { get; set; }
         public virtual ICollection<TesterSoftwareBuildsheet> TesterSoftwares { get; set; }
+
         [Display(Name = "Certification Label Requirements", GroupName = "Software")]
         public SelectList CertificationLabelRequirementList { get; set; }
         public List<int> CertificationLabelRequirementIds { get; set; }
         public virtual ICollection<CertificationLabelRequirementBuildSheet> CertificationLabelRequirements { get; set; }
+
+
+        [Display(Name = "Certification Type", GroupName = "Software")]
+        public SelectList TypeofCertificateList { get; set; }
+        public List<int> TypeofCertificateIds { get; set; }
+        public virtual ICollection<CertificationTypeBuildSheet> CertificationTypes { get; set; }
+
     }
 }

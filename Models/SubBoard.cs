@@ -15,6 +15,7 @@ namespace BuildSheets.Models
         public string URL { get; set; }
         public virtual ICollection<SubBoardBuildSheet> SubBoardBuildSheets { get; set; }
     }
+
     public class SubBoardBuildSheet
     {
         public int SubBoardBuildSheetId { get; set; }

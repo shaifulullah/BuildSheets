@@ -8,6 +8,7 @@ namespace BuildSheets.Data
         public DbSet<BaseBoard> BaseBoards { get; set; }
         public DbSet<BuildSheet> BuildSheets { get; set; }
         public DbSet<CertificationLabelRequirement> CertificationLabelRequirements { get; set; }
+        public DbSet<CertificationType> CertificationTypes { get; set; }
         public DbSet<ContractManufactureAssemblyDrawing> ContractManufactureAssemblyDrawings { get; set; }
         public DbSet<Document> Documents { get; set; }
         public DbSet<GeotabAssemblyDrawing> GeotabAssemblyDrawings { get; set; }
@@ -20,6 +21,7 @@ namespace BuildSheets.Data
         public DbSet<TesterParameter> TesterParameters { get; set; }
         public DbSet<TesterSoftware> TesterSoftwares { get; set; }
         public DbSet<WorkInstruction> WorkInstructions { get; set; }
+
         public DbSet<BaseBoardBuildSheet> BaseBoardBuildSheets { get; set; }
         public DbSet<SubBoardBuildSheet> SubBoardBuildSheets { get; set; }
         public DbSet<HardwareBuildSheet> HardwareBuildSheets { get; set; }
@@ -33,25 +35,38 @@ namespace BuildSheets.Data
         public DbSet<ContractManufactureAssemblyDrawingBuildSheet> ContractManufactureAssemblyDrawingBuildSheets { get; set; }
         public DbSet<TesterSoftwareBuildsheet> TesterSoftwareBuildsheets { get; set; }
         public DbSet<CertificationLabelRequirementBuildSheet> CertificationLabelRequirementBuildSheets { get; set; }
+        public DbSet<CertificationTypeBuildSheet> CertificationTypeBuildSheets { get; set; }
+
+
 
         public BuildSheetsDBContext(DbContextOptions<BuildSheetsDBContext> options) : base(options)
-        { }
+        {
+
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder); modelBuilder.Entity<InternalSubAssemblyBoardBuildSheet>()
-            .HasKey(bb => new { bb.InternalSubAssemblyBoardId, bb.BuildSheetId });
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<InternalSubAssemblyBoardBuildSheet>()
-            .HasOne(bb => bb.InternalSubAssemblyBoard)
-            .WithMany(b => b.InternalSubAssemblyBoardBuildSheets)
-            .HasForeignKey(bb => bb.InternalSubAssemblyBoardId);
+                .HasKey(bb => new { bb.InternalSubAssemblyBoardId, bb.BuildSheetId });
             modelBuilder.Entity<InternalSubAssemblyBoardBuildSheet>()
-            .HasOne(bb => bb.BuildSheet)
-            .WithMany(b => b.BuildSheetsInternalSubAssemblyBoard)
-            .HasForeignKey(b => b.BuildSheetId); modelBuilder.Entity<BaseBoardBuildSheet>().HasKey(bb => new { bb.BaseBoardBuildSheetId, bb.BuildSheetId });
+                .HasOne(bb => bb.InternalSubAssemblyBoard)
+                .WithMany(b => b.InternalSubAssemblyBoardBuildSheets)
+                .HasForeignKey(bb => bb.InternalSubAssemblyBoardId);
+            modelBuilder.Entity<InternalSubAssemblyBoardBuildSheet>()
+                .HasOne(bb => bb.BuildSheet)
+                .WithMany(b => b.BuildSheetsInternalSubAssemblyBoard)
+                .HasForeignKey(b => b.BuildSheetId);
+
+            modelBuilder.Entity<BaseBoardBuildSheet>().HasKey(bb => new { bb.BaseBoardBuildSheetId, bb.BuildSheetId });
             modelBuilder.Entity<BaseBoardBuildSheet>().HasOne(bb => bb.BaseBoard).WithMany(b => b.BaseBoardBuildSheets).HasForeignKey(b => b.BaseBoardBuildSheetId);
-            modelBuilder.Entity<BaseBoardBuildSheet>().HasOne(bb => bb.BuildSheet).WithMany(b => b.BaseBoards).HasForeignKey(b => b.BuildSheetId); modelBuilder.Entity<SubBoardBuildSheet>().HasKey(sb => new { sb.SubBoardBuildSheetId, sb.BuildSheetId });
+            modelBuilder.Entity<BaseBoardBuildSheet>().HasOne(bb => bb.BuildSheet).WithMany(b => b.BaseBoards).HasForeignKey(b => b.BuildSheetId);
+
+            modelBuilder.Entity<SubBoardBuildSheet>().HasKey(sb => new { sb.SubBoardBuildSheetId, sb.BuildSheetId });
             modelBuilder.Entity<SubBoardBuildSheet>().HasOne(sb => sb.SubBoard).WithMany(sb => sb.SubBoardBuildSheets).HasForeignKey(sb => sb.SubBoardBuildSheetId);
-            modelBuilder.Entity<SubBoardBuildSheet>().HasOne(sb => sb.BuildSheet).WithMany(sb => sb.SubBoards).HasForeignKey(sb => sb.BuildSheetId); modelBuilder.Entity<HardwareBuildSheet>().HasKey(t => new { t.HardwareId, t.BuildSheetId });
+            modelBuilder.Entity<SubBoardBuildSheet>().HasOne(sb => sb.BuildSheet).WithMany(sb => sb.SubBoards).HasForeignKey(sb => sb.BuildSheetId);
+
+            modelBuilder.Entity<HardwareBuildSheet>().HasKey(t => new { t.HardwareId, t.BuildSheetId });
             modelBuilder.Entity<HardwareBuildSheet>().HasOne(h => h.Hardware).WithMany(hr => hr.HardwareBuildSheets).HasForeignKey(h => h.HardwareId);
             modelBuilder.Entity<HardwareBuildSheet>().HasOne(b => b.BuildSheet).WithMany(b => b.OtherHardwares).HasForeignKey(b => b.BuildSheetId);
 
@@ -61,27 +76,49 @@ namespace BuildSheets.Data
 
             modelBuilder.Entity<LabelBuildSheet>().HasKey(t => new { t.LabelId, t.BuildSheetId });
             modelBuilder.Entity<LabelBuildSheet>().HasOne(lb => lb.Label).WithMany(lb => lb.LabelBuildSheets).HasForeignKey(lb => lb.LabelId);
-            modelBuilder.Entity<LabelBuildSheet>().HasOne(lb => lb.BuildSheet).WithMany(lb => lb.Labels).HasForeignKey(lb => lb.BuildSheetId); modelBuilder.Entity<PackagingBuildSheet>().HasKey(t => new { t.PackagingId, t.BuildSheetId });
+            modelBuilder.Entity<LabelBuildSheet>().HasOne(lb => lb.BuildSheet).WithMany(lb => lb.Labels).HasForeignKey(lb => lb.BuildSheetId);
 
+            modelBuilder.Entity<PackagingBuildSheet>().HasKey(t => new { t.PackagingId, t.BuildSheetId });
             modelBuilder.Entity<PackagingBuildSheet>().HasOne(p => p.Packaging).WithMany(p => p.PackagingBuildSheets).HasForeignKey(p => p.PackagingId);
-            modelBuilder.Entity<PackagingBuildSheet>().HasOne(p => p.BuildSheet).WithMany(p => p.Packagings).HasForeignKey(p => p.BuildSheetId); modelBuilder.Entity<DocumentBuildSheet>().HasKey(t => new { t.DocumentId, t.BuildSheetId });
+            modelBuilder.Entity<PackagingBuildSheet>().HasOne(p => p.BuildSheet).WithMany(p => p.Packagings).HasForeignKey(p => p.BuildSheetId);
+
+            modelBuilder.Entity<DocumentBuildSheet>().HasKey(t => new { t.DocumentId, t.BuildSheetId });
             modelBuilder.Entity<DocumentBuildSheet>().HasOne(dc => dc.Document).WithMany(dc => dc.DocumentBuildSheets).HasForeignKey(dc => dc.DocumentId);
-            modelBuilder.Entity<DocumentBuildSheet>().HasOne(dc => dc.BuildSheet).WithMany(dc => dc.Documents).HasForeignKey(dc => dc.BuildSheetId); modelBuilder.Entity<WorkInstructionBuildSheet>().HasKey(t => new { t.WorkInstructionId, t.BuildSheetId });
+            modelBuilder.Entity<DocumentBuildSheet>().HasOne(dc => dc.BuildSheet).WithMany(dc => dc.Documents).HasForeignKey(dc => dc.BuildSheetId);
+
+            modelBuilder.Entity<WorkInstructionBuildSheet>().HasKey(t => new { t.WorkInstructionId, t.BuildSheetId });
             modelBuilder.Entity<WorkInstructionBuildSheet>().HasOne(w => w.WorkInstruction).WithMany(w => w.WorkInstructionBuildSheets).HasForeignKey(w => w.WorkInstructionId);
-            modelBuilder.Entity<WorkInstructionBuildSheet>().HasOne(w => w.BuildSheet).WithMany(w => w.WorkInstructions).HasForeignKey(w => w.BuildSheetId); modelBuilder.Entity<GeotabAssemblyDrawingBuildSheet>().HasKey(t => new { t.GeotabAssemblyDrawingId, t.BuildSheetId });
+            modelBuilder.Entity<WorkInstructionBuildSheet>().HasOne(w => w.BuildSheet).WithMany(w => w.WorkInstructions).HasForeignKey(w => w.BuildSheetId);
+
+            modelBuilder.Entity<GeotabAssemblyDrawingBuildSheet>().HasKey(t => new { t.GeotabAssemblyDrawingId, t.BuildSheetId });
             modelBuilder.Entity<GeotabAssemblyDrawingBuildSheet>().HasOne(g => g.GeotabAssemblyDrawing).WithMany(g => g.GeotabAssemblyDrawingBuildSheets).HasForeignKey(g => g.GeotabAssemblyDrawingId);
-            modelBuilder.Entity<GeotabAssemblyDrawingBuildSheet>().HasOne(g => g.BuildSheet).WithMany(g => g.GeotabAssemblyDrawings).HasForeignKey(g => g.BuildSheetId); modelBuilder.Entity<ContractManufactureAssemblyDrawingBuildSheet>().HasKey(t => new { t.ContractManufactureAssemblyDrawingId, t.BuildSheetId });
+            modelBuilder.Entity<GeotabAssemblyDrawingBuildSheet>().HasOne(g => g.BuildSheet).WithMany(g => g.GeotabAssemblyDrawings).HasForeignKey(g => g.BuildSheetId);
+
+            modelBuilder.Entity<ContractManufactureAssemblyDrawingBuildSheet>().HasKey(t => new { t.ContractManufactureAssemblyDrawingId, t.BuildSheetId });
             modelBuilder.Entity<ContractManufactureAssemblyDrawingBuildSheet>().HasOne(c => c.ContractManufactureAssemblyDrawing).WithMany(c => c.ContractManufactureAssemblyDrawingBuildSheets).HasForeignKey(c => c.ContractManufactureAssemblyDrawingId);
-            modelBuilder.Entity<ContractManufactureAssemblyDrawingBuildSheet>().HasOne(c => c.BuildSheet).WithMany(c => c.ContractManufactureAssemblyDrawings).HasForeignKey(c => c.BuildSheetId); modelBuilder.Entity<TesterSoftwareBuildsheet>().HasKey(t => new { t.TesterSoftwareId, t.BuildSheetId });
+            modelBuilder.Entity<ContractManufactureAssemblyDrawingBuildSheet>().HasOne(c => c.BuildSheet).WithMany(c => c.ContractManufactureAssemblyDrawings).HasForeignKey(c => c.BuildSheetId);
+
+            modelBuilder.Entity<TesterSoftwareBuildsheet>().HasKey(t => new { t.TesterSoftwareId, t.BuildSheetId });
             modelBuilder.Entity<TesterSoftwareBuildsheet>().HasOne(t => t.TesterSoftware).WithMany(t => t.TesterSoftwareBuildsheets).HasForeignKey(t => t.TesterSoftwareId);
-            modelBuilder.Entity<TesterSoftwareBuildsheet>().HasOne(t => t.BuildSheet).WithMany(t => t.TesterSoftwares).HasForeignKey(t => t.BuildSheetId); modelBuilder.Entity<CertificationLabelRequirementBuildSheet>().HasKey(t => new { t.CertificationLabelRequirementId, t.BuildSheetId });
+            modelBuilder.Entity<TesterSoftwareBuildsheet>().HasOne(t => t.BuildSheet).WithMany(t => t.TesterSoftwares).HasForeignKey(t => t.BuildSheetId);
+
+            modelBuilder.Entity<CertificationLabelRequirementBuildSheet>().HasKey(t => new { t.CertificationLabelRequirementId, t.BuildSheetId });
             modelBuilder.Entity<CertificationLabelRequirementBuildSheet>().HasOne(t => t.CertificationLabelRequirement).WithMany(t => t.CertificationLabelRequirementBuildSheets).HasForeignKey(t => t.CertificationLabelRequirementId);
             modelBuilder.Entity<CertificationLabelRequirementBuildSheet>().HasOne(t => t.BuildSheet).WithMany(t => t.CertificationLabelRequirements).HasForeignKey(t => t.BuildSheetId);
+
+            modelBuilder.Entity<CertificationTypeBuildSheet>().HasKey(t => new { t.CertificationTypeId, t.BuildSheetId });
+            modelBuilder.Entity<CertificationTypeBuildSheet>().HasOne(t => t.CertificationType).WithMany(t => t.CertificationTypeBuildSheets).HasForeignKey(t => t.CertificationTypeId);
+            modelBuilder.Entity<CertificationTypeBuildSheet>().HasOne(t => t.BuildSheet).WithMany(t => t.CertificationTypes).HasForeignKey(t => t.BuildSheetId);
+
             modelBuilder.Entity<TesterParameter>(e =>
             {
-                e.ToTable("TesterParameters"); e.HasKey(x => x.Id);
+                e.ToTable("TesterParameters");
+
+                e.HasKey(x => x.Id);
                 e.Property(x => x.Id)
-                .ValueGeneratedOnAdd(); e.Ignore(x => x.TesterParameterCode);
+                    .ValueGeneratedOnAdd();
+
+                e.Ignore(x => x.TesterParameterCode);
             });
         }
 
