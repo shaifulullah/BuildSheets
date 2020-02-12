@@ -33,6 +33,27 @@
 @if (Model != null)
 {
     <div class="row">
+        <div class="col-md-12">
+            <h3>Details for @Model.DeviceName, Revision @Model.Revision</h3>
+            <a asp-controller="TesterParameters"
+               asp-action="UpdateBS"
+               asp-route-id="@Model.Id"
+               asp-route-devicename="@Model.DeviceName"
+               asp-route-revision="@Model.Revision"
+               class="btn btn-primary">
+                Update BuildSheet
+            </a>
+            @if (!string.IsNullOrEmpty(ViewBag.AddBuildSheetConfirmation))
+            {
+                <div class="row">
+                    <div col-md-12">
+                        <div class="form-control text-center">
+                            <b>@ViewBag.AddBuildSheetConfirmation</b>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
         <div class="col-md-8">
             <h3>Device Parameters:</h3>
             <table class="table">
@@ -44,7 +65,10 @@
                         <th width="40%">
                             Parameter
                         </th>
-                        <th width="20%"></th>
+                        @if (ViewBag.isEditable)
+                        {
+                            <th width="20%"></th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -60,26 +84,31 @@
                                 <td>
                                     @param.InnerText
                                 </td>
-                                <td>
-                                    <a asp-controller="TesterParameters"
-                                       asp-action="Edit"
-                                       asp-route-id="@Model.Id"
-                                       asp-route-type="@TesterParameterCodeType.DeviceParameters"
-                                       asp-route-parameterName="@param.Name"
-                                       asp-route-parameterValue="@param.InnerText"
-                                       asp-route-index="@index">
-                                        Edit
-                                    </a> |
-                                    <a asp-controller="TesterParameters"
-                                       asp-action="Delete"
-                                       asp-route-id="@Model.Id"
-                                       asp-route-type="@TesterParameterCodeType.DeviceParameters"
-                                       asp-route-parameterName="@param.Name"
-                                       asp-route-parameterValue="@param.InnerText"
-                                       asp-route-index="@index">
-                                        Delete
-                                    </a>
-                                </td>
+                                @if (ViewBag.isEditable)
+                                {
+                                    <td>
+                                        <a asp-controller="TesterParameters"
+                                           asp-action="Edit"
+                                           asp-route-id="@Model.Id"
+                                           asp-route-type="@TesterParameterCodeType.DeviceParameters"
+                                           asp-route-parameterName="@param.Name"
+                                           asp-route-parameterValue="@param.InnerText"
+                                           asp-route-revision="@Model.Revision"
+                                           asp-route-index="@index">
+                                            Edit
+                                        </a> |
+                                        <a asp-controller="TesterParameters"
+                                           asp-action="Delete"
+                                           asp-route-id="@Model.Id"
+                                           asp-route-type="@TesterParameterCodeType.DeviceParameters"
+                                           asp-route-parameterName="@param.Name"
+                                           asp-route-parameterValue="@param.InnerText"
+                                           asp-route-revision="@Model.Revision"
+                                           asp-route-index="@index">
+                                            Delete
+                                        </a>
+                                    </td>
+                                }
                             </tr>
                             index++;
                         }
@@ -95,13 +124,17 @@
                     <tr>
                         <td></td>
                         <td></td>
-                        <td>
-                            <a asp-controller="TesterParameters"
-                               asp-action="Add"
-                               asp-route-id="@Model.Id"
-                               asp-route-type="@TesterParameterCodeType.DeviceParameters"
-                               class="btn btn-primary">Add</a>
-                        </td>
+                        @if (ViewBag.isEditable)
+                        {
+                            <td>
+                                <a asp-controller="TesterParameters"
+                                   asp-action="Add"
+                                   asp-route-id="@Model.Id"
+                                   asp-route-type="@TesterParameterCodeType.DeviceParameters"
+                                   asp-route-revision="@Model.Revision"
+                                   class="btn btn-primary">Add</a>
+                            </td>
+                        }
                     </tr>
                 </tbody>
             </table>
@@ -120,7 +153,10 @@
                         <th width="40%">
                             Parameter
                         </th>
-                        <th width="20%"></th>
+                        @if (ViewBag.isEditable)
+                        {
+                            <th width="20%"></th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -136,26 +172,31 @@
                                 <td>
                                     @param.InnerText
                                 </td>
-                                <td>
-                                    <a asp-controller="TesterParameters"
-                                       asp-action="Edit"
-                                       asp-route-id="@Model.Id"
-                                       asp-route-type="@TesterParameterCodeType.FirmwareGates"
-                                       asp-route-parameterName="@param.Name"
-                                       asp-route-parameterValue="@param.InnerText"
-                                       asp-route-index="@index">
-                                        Edit
-                                    </a> |
-                                    <a asp-controller="TesterParameters"
-                                       asp-action="Delete"
-                                       asp-route-id="@Model.Id"
-                                       asp-route-type="@TesterParameterCodeType.FirmwareGates"
-                                       asp-route-parameterName="@param.Name"
-                                       asp-route-parameterValue="@param.InnerText"
-                                       asp-route-index="@index">
-                                        Delete
-                                    </a>
-                                </td>
+                                @if (ViewBag.isEditable)
+                                {
+                                    <td>
+                                        <a asp-controller="TesterParameters"
+                                           asp-action="Edit"
+                                           asp-route-id="@Model.Id"
+                                           asp-route-type="@TesterParameterCodeType.FirmwareGates"
+                                           asp-route-parameterName="@param.Name"
+                                           asp-route-parameterValue="@param.InnerText"
+                                           asp-route-revision="@Model.Revision"
+                                           asp-route-index="@index">
+                                            Edit
+                                        </a> |
+                                        <a asp-controller="TesterParameters"
+                                           asp-action="Delete"
+                                           asp-route-id="@Model.Id"
+                                           asp-route-type="@TesterParameterCodeType.FirmwareGates"
+                                           asp-route-parameterName="@param.Name"
+                                           asp-route-parameterValue="@param.InnerText"
+                                           asp-route-revision="@Model.Revision"
+                                           asp-route-index="@index">
+                                            Delete
+                                        </a>
+                                    </td>
+                                }
                             </tr>
                             index++;
                         }
@@ -171,13 +212,17 @@
                     <tr>
                         <td></td>
                         <td></td>
-                        <td>
-                            <a asp-controller="TesterParameters"
-                               asp-action="Add"
-                               asp-route-id="@Model.Id"
-                               asp-route-type="@TesterParameterCodeType.FirmwareGates"
-                               class="btn btn-primary">Add</a>
-                        </td>
+                        @if (ViewBag.isEditable)
+                        {
+                            <td>
+                                <a asp-controller="TesterParameters"
+                                   asp-action="Add"
+                                   asp-route-id="@Model.Id"
+                                   asp-route-type="@TesterParameterCodeType.FirmwareGates"
+                                   asp-route-revision="@Model.Revision"
+                                   class="btn btn-primary">Add</a>
+                            </td>
+                        }
                     </tr>
                 </tbody>
             </table>
@@ -196,7 +241,10 @@
                         <th>
                             Parameter
                         </th>
-                        <th></th>
+                        @if (ViewBag.isEditable)
+                        {
+                            <th width="20%"></th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -212,26 +260,31 @@
                                 <td>
                                     @param.InnerText
                                 </td>
-                                <td>
-                                    <a asp-controller="TesterParameters"
-                                       asp-action="Edit"
-                                       asp-route-id="@Model.Id"
-                                       asp-route-type="@TesterParameterCodeType.ModemIncludeList"
-                                       asp-route-parameterName="@param.Name"
-                                       asp-route-parameterValue="@param.InnerText"
-                                       asp-route-index="@index">
-                                        Edit
-                                    </a> |
-                                    <a asp-controller="TesterParameters"
-                                       asp-action="Delete"
-                                       asp-route-id="@Model.Id"
-                                       asp-route-type="@TesterParameterCodeType.ModemIncludeList"
-                                       asp-route-parameterName="@param.Name"
-                                       asp-route-parameterValue="@param.InnerText"
-                                       asp-route-index="@index">
-                                        Delete
-                                    </a>
-                                </td>
+                                @if (ViewBag.isEditable)
+                                {
+                                    <td>
+                                        <a asp-controller="TesterParameters"
+                                           asp-action="Edit"
+                                           asp-route-id="@Model.Id"
+                                           asp-route-type="@TesterParameterCodeType.ModemIncludeList"
+                                           asp-route-parameterName="@param.Name"
+                                           asp-route-parameterValue="@param.InnerText"
+                                           asp-route-revision="@Model.Revision"
+                                           asp-route-index="@index">
+                                            Edit
+                                        </a> |
+                                        <a asp-controller="TesterParameters"
+                                           asp-action="Delete"
+                                           asp-route-id="@Model.Id"
+                                           asp-route-type="@TesterParameterCodeType.ModemIncludeList"
+                                           asp-route-parameterName="@param.Name"
+                                           asp-route-parameterValue="@param.InnerText"
+                                           asp-route-revision="@Model.Revision"
+                                           asp-route-index="@index">
+                                            Delete
+                                        </a>
+                                    </td>
+                                }
                             </tr>
                             index++;
                         }
@@ -247,13 +300,17 @@
                     <tr>
                         <td></td>
                         <td></td>
-                        <td>
-                            <a asp-controller="TesterParameters"
-                               asp-action="Add"
-                               asp-route-id="@Model.Id"
-                               asp-route-type="@TesterParameterCodeType.ModemIncludeList"
-                               class="btn btn-primary">Add</a>
-                        </td>
+                        @if (ViewBag.isEditable)
+                        {
+                            <td>
+                                <a asp-controller="TesterParameters"
+                                   asp-action="Add"
+                                   asp-route-id="@Model.Id"
+                                   asp-route-type="@TesterParameterCodeType.ModemIncludeList"
+                                   asp-route-revision="@Model.Revision"
+                                   class="btn btn-primary">Add</a>
+                            </td>
+                        }
                     </tr>
                 </tbody>
             </table>
@@ -272,7 +329,10 @@
                         <th>
                             Parameter
                         </th>
-                        <th></th>
+                        @if (ViewBag.isEditable)
+                        {
+                            <th width="20%"></th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -288,24 +348,29 @@
                                 <td>
                                     @param.InnerText
                                 </td>
-                                <td>
-                                    <a asp-controller="TesterParameters"
-                                       asp-action="Edit"
-                                       asp-route-id="@Model.Id"
-                                       asp-route-type="@TesterParameterCodeType.ModemExcludeList"
-                                       asp-route-parameterName="@param.Name"
-                                       asp-route-index="@index">
-                                        Edit
-                                    </a> |
-                                    <a asp-controller="TesterParameters"
-                                       asp-action="Delete"
-                                       asp-route-id="@Model.Id"
-                                       asp-route-type="@TesterParameterCodeType.ModemExcludeList"
-                                       asp-route-parameterName="@param.Name"
-                                       asp-route-index="@index">
-                                        Delete
-                                    </a>
-                                </td>
+                                @if (ViewBag.isEditable)
+                                {
+                                    <td>
+                                        <a asp-controller="TesterParameters"
+                                           asp-action="Edit"
+                                           asp-route-id="@Model.Id"
+                                           asp-route-type="@TesterParameterCodeType.ModemExcludeList"
+                                           asp-route-parameterName="@param.Name"
+                                           asp-route-revision="@Model.Revision"
+                                           asp-route-index="@index">
+                                            Edit
+                                        </a> |
+                                        <a asp-controller="TesterParameters"
+                                           asp-action="Delete"
+                                           asp-route-id="@Model.Id"
+                                           asp-route-type="@TesterParameterCodeType.ModemExcludeList"
+                                           asp-route-parameterName="@param.Name"
+                                           asp-route-revision="@Model.Revision"
+                                           asp-route-index="@index">
+                                            Delete
+                                        </a>
+                                    </td>
+                                }
                             </tr>
                             index++;
                         }
@@ -321,37 +386,23 @@
                     <tr>
                         <td></td>
                         <td></td>
-                        <td>
-                            <a asp-controller="TesterParameters"
-                               asp-action="Add"
-                               asp-route-id="@Model.Id"
-                               asp-route-type="@TesterParameterCodeType.ModemExcludeList"
-                               class="btn btn-primary">Add</a>
-                        </td>
+                        @if (ViewBag.isEditable)
+                        {
+                            <td>
+                                <a asp-controller="TesterParameters"
+                                   asp-action="Add"
+                                   asp-route-id="@Model.Id"
+                                   asp-route-type="@TesterParameterCodeType.ModemExcludeList"
+                                   asp-route-revision="@Model.Revision"
+                                   class="btn btn-primary">Add</a>
+                            </td>
+                        }
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
-    @*<div>
-            <a asp-controller="TesterParameters" asp-action="Main" asp-route-name="@Model.DeviceName">Back to List</a>
-        </div>*@
+    <div>
+        <a asp-controller="TesterParameters" asp-action="Main" asp-route-name="@Model.DeviceName">Back to List</a>
+    </div>
 }
-
-@*@section Scripts {
-        <script>
-            function deleteParameter(id, type, parameterName) {
-                if (!confirm('Are you sure to delete "' + parameterName + '" parameter?')) return;
-
-                $.post('/BuildSheetsArea/TesterParameter/Delete', { id, type, parameterName }, function (response) {
-                    if (response.isSucceeded) {
-                        alert('"' + parameterName + '" parameter has been deleted successfully.');
-                        location.reload();
-                    }
-                    else {
-                        alert('An error occurred while deleting"' + parameterName + '" parameter. Please try again.');
-                    }
-                });
-            }
-        </script>
-    }*@

@@ -16,6 +16,7 @@ namespace BuildSheets.Models
         public string DeviceName { get; set; }
         [Column(TypeName = "varchar(MAX)")]
         public string Parameter { get; set; }
+        public int? Revision { get; set; }
         public TesterParameterCode TesterParameterCode { get; set; }
     }
 }

@@ -5,373 +5,404 @@
 }
 
 
-<div class="container">
-    <div class="row">
-        <form asp-action="Details" method="post" id="DetailsForm">
-            <div class="col-xs-12">
-                <div class="row">
-                    <div class="col-xs-6">
-                        <p>
-                            <strong>@Model.ProductName</strong> Build Sheets<br />
-                            Product Owner: @Model.ProductOwner<br />
-                            Product Launch date: @Model.ProductLaunchDate
-                        </p>
-                        <br />
-                        <br />
-                        <p>
-                            Provisoining Package:
-                            @(Model.ProvisioningPackage != null ? Model.ProvisioningPackage : "N/A")
-                            @*@if (Model.ProvisioningPackage != null)
+    <div class="container">
+        <div class="row">
+            <form asp-action="Details" method="post" id="DetailsForm">
+                <div class="col-xs-12">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <p>
+                                <strong>@Model.ProductName</strong> Build Sheets<br />
+                                Product Owner: @Model.ProductOwner<br />
+                                Product Launch date: @Model.ProductLaunchDate
+                            </p>
+                            <br />
+                            <br />
+                            <p>
+                                Provisoining Package:
+                                @(Model.ProvisioningPackage != null ? Model.ProvisioningPackage : "N/A")
+                                @*@if (Model.ProvisioningPackage != null)
                                 {
                                     <text>Model.ProvisioningPackage</text>
                                 }
                                 else
                                 { <text>N/A</text>
                                 }*@
-                        </p>
+                            </p>
+                        </div>
+                        <div class="col-xs-6">
+                            <img src="~/images/geotabLogo.jpg" class="img-responsive" />
+                        </div>
                     </div>
-                    <div class="col-xs-6">
-                        <img src="~/images/geotabLogo.jpg" class="img-responsive" />
+                    <hr />
+                </div>
+                <div class="col-xs-12">
+                    <div class="text-center">
+                        <h1><a href="@Model.ProductImageURL" target="_blank"><u>@Model.ProductName</u></a></h1>
+                        <p>@Model.Description</p>
+                        <h3>Product Build Sheet</h3>
                     </div>
                 </div>
-                <hr />
-            </div>
-            <div class="col-xs-12">
-                <div class="text-center">
-                    <h1><a href="@Model.ProductImageURL" target="_blank"><u>@Model.ProductName</u></a></h1>
-                    <p>@Model.Description</p>
-                    <h3>Product Build Sheet</h3>
-                </div>
-            </div>
-            <div class="col-xs-12">
-                <div class="row">
-                    <div class="col-xs-2">Product Status:</div>
-                    <div class="col-xs-7">
+                <div class="col-xs-12">
+                    <div class="row">
+                        <div class="col-xs-2">Product Status:</div>
+                        <div class="col-xs-7">
 
-                        <b>@Model.ProductStatus</b>
-                        @*&#9723; Preliminary
+                            <b>@Model.ProductStatus</b>
+                            @*&#9723; Preliminary
                             <br>&#10004; Release
                             <br>&#9723; Change*@
 
-                    </div>
-                    <div class="col-xs-3">
-                        <b>Rev:</b>
-                        <span><a href="@Model.RevisionURL" target="_blank">@Model.Revision</a></span>
-                        <br>
-                        <b>Updated By:</b>
-                        <span>@Model.UpdatedBy</span>
-                        <br>
-                        <b>Date:</b>
-                        <span>@Model.ProductUpdatedOn</span>
-                        <br>
-                        <b>ECO ID:</b>
-                        @(Model.ECOId > 0 ? Model.ECOId.ToString() : "N/A")
-                        <br>
+                        </div>
+                        <div class="col-xs-3">
+                            <b>Rev:</b>
+                            <span><a href="@Model.RevisionURL" target="_blank">@Model.Revision</a></span>
+                            <br>
+                            <b>Updated By:</b>
+                            <span>@Model.UpdatedBy</span>
+                            <br>
+                            <b>Date:</b>
+                            <span>@Model.ProductUpdatedOn</span>
+                            <br>
+                            <b>ECO ID:</b>
+                            @(Model.ECOId > 0 ? Model.ECOId.ToString() : "N/A")
+                            <br>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-xs-12">
-                <table class="table table-sm table-bordered">
-                    <tr>
-                        <td>
-                            <h4>
-                                Internal Sub Assembly Boards:
-                            </h4>
-                            <table class="table borderless">
-                                @foreach (var mode in Model.BuildSheetsInternalSubAssemblyBoard)
-                                {
-                                    <tr>
-                                        <td>
-                                            BOM Name: @mode.InternalSubAssemblyBoard.Name
-                                        </td>
-                                        <td>Rev: @mode.InternalSubAssemblyBoard.Rev</td>
-                                    </tr>
-                                }
-                            </table>
-                            <h4>Base Board:</h4>
-                            <table class="table borderless">
-                                @foreach (var baseBoard in Model.BaseBoards)
-                                {
-                                    <tr>
-                                        <td>BOM Name: @baseBoard.BaseBoard.Name</td>
-                                        <td>Rev:@baseBoard.BaseBoard.Rev</td>
-                                    </tr>
-                                }
-                            </table>
-                            <h4>Sub Board:</h4>
-                            <table class="table borderless">
-                                @foreach (var subBoard in Model.SubBoards)
-                                {
-                                    <tr>
-                                        <td>BOM Name: @subBoard.SubBoard.Name</td>
-                                        <td>Rev: @subBoard.SubBoard.Rev</td>
-                                    </tr>
-                                }
-                            </table>
-                            <br />
-                            <h4>Other Hardware:</h4>
-                            <table class="table borderless">
-                                @if (Model.OtherHardwares.Count > 0)
-                                {
-                                    @foreach (var otherHardware in Model.OtherHardwares)
+                <div class="col-xs-12">
+                    <table class="table table-sm table-bordered">
+                        <tr>
+                            <td>
+                                <h4>
+                                    Internal Sub Assembly Boards:
+                                </h4>
+                                <table class="table borderless">
+                                    @foreach (var mode in Model.BuildSheetsInternalSubAssemblyBoard)
                                     {
                                         <tr>
-                                            <td>@otherHardware.Quantity</td>
-                                            <td><a href="@otherHardware.Hardware.URL" target="_blank">@otherHardware.Hardware.Name</a></td>
-                                            <td>@otherHardware.Hardware.Rev</td>
-                                            <td>@otherHardware.Hardware.Description</td>
+                                            <td>
+                                                BOM Name: @mode.InternalSubAssemblyBoard.Name
+                                            </td>
+                                            <td>Rev: @mode.InternalSubAssemblyBoard.Rev</td>
                                         </tr>
                                     }
-                                }
-                                else
-                                {
-                                    <text>N/A</text>
-                                }
-                            </table>
-                            <h4>Inserts:</h4>
-                            <table class="table borderless">
-                                @if (Model.Inserts.Count > 0)
-                                {
-                                    @foreach (var insert in Model.Inserts)
+                                </table>
+                                <h4>Base Board:</h4>
+                                <table class="table borderless">
+                                    @foreach (var baseBoard in Model.BaseBoards)
                                     {
                                         <tr>
-                                            <td>@insert.Quantity</td>
-                                            <td><a href="@insert.Insert.URL" target="_blank">@insert.Insert.Name</a></td>
-                                            <td>@insert.Insert.Rev</td>
-                                            <td>@insert.Insert.Description</td>
+                                            <td>BOM Name: @baseBoard.BaseBoard.Name</td>
+                                            <td>Rev:@baseBoard.BaseBoard.Rev</td>
                                         </tr>
                                     }
-                                }
-                                else
-                                {
-                                    <text>N/A</text>
-                                }
-                            </table>
-                            <h4>Lables:</h4>
-                            <table class="table borderless">
-                                @if (Model.Labels.Count > 0)
-                                {
-                                    @foreach (var label in Model.Labels)
+                                </table>
+                                <h4>Sub Board:</h4>
+                                <table class="table borderless">
+                                    @foreach (var subBoard in Model.SubBoards)
                                     {
                                         <tr>
-                                            <td>@label.Quantity</td>
-                                            <td><a href="@label.Label.URL" target="_blank">@label.Label.Name</a></td>
-                                            <td>@label.Label.Rev</td>
-                                            <td>@label.Label.Description</td>
+                                            <td>BOM Name: @subBoard.SubBoard.Name</td>
+                                            <td>Rev: @subBoard.SubBoard.Rev</td>
                                         </tr>
                                     }
-                                }
-                                else
-                                {
-                                    <text>N/A</text>
-                                }
-                            </table>
-                            <h4>Packaging:</h4>
-                            <table class="table borderless">
-                                @if (Model.Packagings.Count > 0)
-                                {
-                                    @foreach (var packaging in Model.Packagings)
+                                </table>
+                                <br />
+                                <h4>Other Hardware:</h4>
+                                <table class="table borderless">
+                                    @if (Model.OtherHardwares.Count > 0)
                                     {
-                                        <tr>
-                                            <td>@packaging.Quantity</td>
-                                            <td><a href="@packaging.Packaging.URL" target="_blank">@packaging.Packaging.Name</a></td>
-                                            <td>@packaging.Packaging.Rev</td>
-                                            <td>@packaging.Packaging.Description</td>
-                                        </tr>
-                                    }
-                                }
-                                else
-                                {
-                                    <text>N/A</text>
-                                }
-                            </table>
-                        </td>
-
-                        <td>
-                            <h4>Support Document:</h4>
-                            <table class="table borderless">
-                                @if (Model.Documents.Count > 0)
-                                {
-                                    @foreach (var document in Model.Documents)
-                                    {
-                                        <tr>
-                                            <td><a href="@document.Document.URL" target="_blank">@document.Document.Name</a></td>
-                                            <td>@document.Document.Rev - @document.Document.RevDate</td>
-                                        </tr>
-                                    }
-                                }
-                                else
-                                {
-                                    <text>N/A</text>
-                                }
-                            </table>
-                            <h4>APN:</h4>
-                            <table class="table borderless">
-                                <tr>
-                                    <td>@(Model.APN != null ? Model.APN : "N/A")</td>
-                                </tr>
-                            </table>
-                            <h4>Customer Gateway:</h4>
-                            <table class="table borderless">
-                                <tr>
-                                    <td>@(Model.CustomerGateway != null ? Model.CustomerGateway : "N/A")</td>
-                                </tr>
-                            </table>
-                            <h4>Work Instructions:</h4>
-                            <table class="table borderless">
-                                @if (Model.WorkInstructions.Count > 0)
-                                {
-                                    @foreach (var workInstruction in Model.WorkInstructions)
-                                    {
-                                        <tr>
-                                            <td><a href="@workInstruction.WorkInstruction.URL" target="_blank">@workInstruction.WorkInstruction.Name</a></td>
-                                            <td>@workInstruction.WorkInstruction.Rev</td>
-                                        </tr>
-                                    }
-                                }
-                                else
-                                {
-                                    <text>N/A</text>
-                                }
-                            </table>
-                            <h4>Geotab Assembly Drawings:</h4>
-                            <table class="table borderless">
-                                @if (Model.GeotabAssemblyDrawings.Count > 0)
-                                {
-                                    @foreach (var geotabAssemblyDrawing in Model.GeotabAssemblyDrawings)
-                                    {
-                                        <tr>
-                                            <td><a href="@geotabAssemblyDrawing.GeotabAssemblyDrawing.URL" target="_blank">@geotabAssemblyDrawing.GeotabAssemblyDrawing.Name</a></td>
-                                            <td>@geotabAssemblyDrawing.GeotabAssemblyDrawing.Rev</td>
-                                        </tr>
-                                    }
-                                }
-                                else
-                                {
-                                    <text>N/A</text>
-                                }
-                            </table>
-                            <h4>Contract Manufacture Assembly Drawings</h4>
-                            <table class="table borderless">
-                                @if (Model.ContractManufactureAssemblyDrawings.Count > 0)
-                                {
-                                    @foreach (var contractManufactureAssemblyDrawing in Model.ContractManufactureAssemblyDrawings)
-                                    {
-                                        <tr>
-                                            <td><a href="@contractManufactureAssemblyDrawing.ContractManufactureAssemblyDrawing.URL" target="_blank">@contractManufactureAssemblyDrawing.ContractManufactureAssemblyDrawing.Name</a></td>
-                                            <td>@contractManufactureAssemblyDrawing.ContractManufactureAssemblyDrawing.Rev</td>
-                                        </tr>
-                                    }
-                                }
-                                else
-                                {
-                                    <text>N/A</text>
-                                }
-                            </table>
-                            <h4>Tester Software:</h4>
-                            <table class="table table-bordered">
-                                @if (Model.TesterSoftwares.Count > 0)
-                                {
-                                    <tr>
-                                        <td>Product Codes</td>
-                                        @foreach (var testerSoftware in Model.TesterSoftwares)
+                                        @foreach (var otherHardware in Model.OtherHardwares)
                                         {
-                                            <td><a href="@testerSoftware.TesterSoftware.ProductCodeURL" target="_blank">@testerSoftware.TesterSoftware.ProductCode</a></td>
+                                            <tr>
+                                                <td>@otherHardware.Quantity</td>
+                                                <td><a href="@otherHardware.Hardware.URL" target="_blank">@otherHardware.Hardware.Name</a></td>
+                                                <td>@otherHardware.Hardware.Rev</td>
+                                                <td>@otherHardware.Hardware.Description</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <text>N/A</text>
+                                    }
+                                </table>
+                                <h4>Inserts:</h4>
+                                <table class="table borderless">
+                                    @if (Model.Inserts.Count > 0)
+                                    {
+                                        @foreach (var insert in Model.Inserts)
+                                        {
+                                            <tr>
+                                                <td>@insert.Quantity</td>
+                                                <td><a href="@insert.Insert.URL" target="_blank">@insert.Insert.Name</a></td>
+                                                <td>@insert.Insert.Rev</td>
+                                                <td>@insert.Insert.Description</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <text>N/A</text>
+                                    }
+                                </table>
+                                <h4>Lables:</h4>
+                                <table class="table borderless">
+                                    @if (Model.Labels.Count > 0)
+                                    {
+                                        @foreach (var label in Model.Labels)
+                                        {
+                                            <tr>
+                                                <td>@label.Quantity</td>
+                                                <td><a href="@label.Label.URL" target="_blank">@label.Label.Name</a></td>
+                                                <td>@label.Label.Rev</td>
+                                                <td>@label.Label.Description</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <text>N/A</text>
+                                    }
+                                </table>
+                                <h4>Packaging:</h4>
+                                <table class="table borderless">
+                                    @if (Model.Packagings.Count > 0)
+                                    {
+                                        @foreach (var packaging in Model.Packagings)
+                                        {
+                                            <tr>
+                                                <td>@packaging.Quantity</td>
+                                                <td><a href="@packaging.Packaging.URL" target="_blank">@packaging.Packaging.Name</a></td>
+                                                <td>@packaging.Packaging.Rev</td>
+                                                <td>@packaging.Packaging.Description</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <text>N/A</text>
+                                    }
+                                </table>
+                            </td>
+
+                            <td>
+                                <h4>Support Document:</h4>
+                                <table class="table borderless">
+                                    @if (Model.Documents.Count > 0)
+                                    {
+                                        @foreach (var document in Model.Documents)
+                                        {
+                                            <tr>
+                                                <td><a href="@document.Document.URL" target="_blank">@document.Document.Name</a></td>
+                                                <td>@document.Document.Rev - @document.Document.RevDate</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <text>N/A</text>
+                                    }
+                                </table>
+                                <h4>APN:</h4>
+                                <table class="table borderless">
+                                    <tr>
+                                        <td>@(Model.APN != null ? Model.APN : "N/A")</td>
+                                    </tr>
+                                </table>
+                                <h4>Customer Gateway:</h4>
+                                <table class="table borderless">
+                                    <tr>
+                                        <td>@(Model.CustomerGateway != null ? Model.CustomerGateway : "N/A")</td>
+                                    </tr>
+                                </table>
+                                <h4>Work Instructions:</h4>
+                                <table class="table borderless">
+                                    @if (Model.WorkInstructions.Count > 0)
+                                    {
+                                        @foreach (var workInstruction in Model.WorkInstructions)
+                                        {
+                                            <tr>
+                                                <td><a href="@workInstruction.WorkInstruction.URL" target="_blank">@workInstruction.WorkInstruction.Name</a></td>
+                                                <td>@workInstruction.WorkInstruction.Rev</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <text>N/A</text>
+                                    }
+                                </table>
+                                <h4>Geotab Assembly Drawings:</h4>
+                                <table class="table borderless">
+                                    @if (Model.GeotabAssemblyDrawings.Count > 0)
+                                    {
+                                        @foreach (var geotabAssemblyDrawing in Model.GeotabAssemblyDrawings)
+                                        {
+                                            <tr>
+                                                <td><a href="@geotabAssemblyDrawing.GeotabAssemblyDrawing.URL" target="_blank">@geotabAssemblyDrawing.GeotabAssemblyDrawing.Name</a></td>
+                                                <td>@geotabAssemblyDrawing.GeotabAssemblyDrawing.Rev</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <text>N/A</text>
+                                    }
+                                </table>
+                                <h4>Contract Manufacture Assembly Drawings</h4>
+                                <table class="table borderless">
+                                    @if (Model.ContractManufactureAssemblyDrawings.Count > 0)
+                                    {
+                                        @foreach (var contractManufactureAssemblyDrawing in Model.ContractManufactureAssemblyDrawings)
+                                        {
+                                            <tr>
+                                                <td><a href="@contractManufactureAssemblyDrawing.ContractManufactureAssemblyDrawing.URL" target="_blank">@contractManufactureAssemblyDrawing.ContractManufactureAssemblyDrawing.Name</a></td>
+                                                <td>@contractManufactureAssemblyDrawing.ContractManufactureAssemblyDrawing.Rev</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <text>N/A</text>
+                                    }
+                                </table>
+                                <h4>Tester Software:</h4>
+                                <table class="table table-bordered">
+                                    @if (Model.TesterSoftwares.Count > 0)
+                                    {
+                                        <tr>
+                                            <td>Product Codes</td>
+                                            @foreach (var testerSoftware in Model.TesterSoftwares)
+                                            {
+                                                <td><a href="@testerSoftware.TesterSoftware.ProductCodeURL" target="_blank">@testerSoftware.TesterSoftware.ProductCode</a></td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td>Version</td>
+                                            @foreach (var testerSoftware in Model.TesterSoftwares)
+                                            {
+                                                <td><a href="@testerSoftware.TesterSoftware.TesterVersionURL" target="_blank">@testerSoftware.TesterSoftware.TesterVersion</a></td>
+                                            }
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <text>N/A</text>
+                                    }
+                                </table>
+                                <h4>Certification label requirements:</h4>
+                                <table class="table borderless">
+                                    @if (Model.CertificationLabelRequirements.Count > 0)
+                                    {
+                                        @foreach (var CertificationLabelRequirement in Model.CertificationLabelRequirements)
+                                        {
+                                            <tr>
+                                                <td><a href="@CertificationLabelRequirement.CertificationLabelRequirement.SideAURL" target="_blank">@CertificationLabelRequirement.CertificationLabelRequirement.SideADescription</a></td>
+                                                <td>(Side @CertificationLabelRequirement.CertificationLabelRequirement.SideA)</td>
+                                            </tr>
+                                            <tr>
+                                                <td><a href="@CertificationLabelRequirement.CertificationLabelRequirement.SideBURL" target="_blank">@CertificationLabelRequirement.CertificationLabelRequirement.SideBDescription</a></td>
+                                                <td>(Side @CertificationLabelRequirement.CertificationLabelRequirement.SideB)</td>
+                                            </tr>
+                                        }
+                                        <br />
+
+                                    }
+                                    else
+                                    {
+                                        <text>N/A</text>
+                                    }
+                                    @if (Model.CertificationTypes.Count > 0)
+                                    {
+                                        @foreach (var CertificationType in Model.CertificationTypes)
+                                        {
+                                            <tr>
+                                                <td>@CertificationType.CertificationType.TypeofCertificate: @CertificationType.CertificationType.Description</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <text>N/A</text>
+                                    }
+                                </table>
+                                <h4>Device Firmware:</h4>
+                                <table class="table borderless">
+                                    <tr>
+                                        @if (Model.DeviceFirmware != null)
+                                        {
+                                            <td>@Model.DeviceFirmware</td>
+                                        }
+                                        else
+                                        {
+                                            <text>N/A</text>
+                                        }
+                                    </tr>
+                                </table>
+                                <h4>Modem:</h4>
+                                <table class="table borderless">
+                                    <tr>
+                                        @if (Model.ModemHwName != null)
+                                        {
+                                            <td>H/W: @Model.ModemHwName</td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                H/W: N/A
+                                            </td>
+
                                         }
                                     </tr>
                                     <tr>
-                                        <td>Version</td>
-                                        @foreach (var testerSoftware in Model.TesterSoftwares)
+                                        @if (Model.ModemFirmware != null)
                                         {
-                                            <td><a href="@testerSoftware.TesterSoftware.TesterVersionURL" target="_blank">@testerSoftware.TesterSoftware.TesterVersion</a></td>
+                                            <td>F/W: @Model.ModemFirmware</td>
+                                        }
+                                        else
+                                        {
+                                            <td>F/W: N/A</td>
                                         }
                                     </tr>
-                                }
-                                else
-                                {
-                                    <text>N/A</text>
-                                }
-                            </table>
-                            <h4>Certification label requirements:</h4>
-                            <table class="table borderless">
-                                @if (Model.CertificationLabelRequirements.Count > 0)
-                                {
-                                    @foreach (var CertificationLabelRequirement in Model.CertificationLabelRequirements)
-                                    {
-                                        <tr>
-                                            <td><a href="@CertificationLabelRequirement.CertificationLabelRequirement.SideAURL" target="_blank">@CertificationLabelRequirement.CertificationLabelRequirement.SideADescription</a></td>
-                                            <td>(Side @CertificationLabelRequirement.CertificationLabelRequirement.SideA)</td>
-                                        </tr>
-                                        <tr>
-                                            <td><a href="@CertificationLabelRequirement.CertificationLabelRequirement.SideBURL" target="_blank">@CertificationLabelRequirement.CertificationLabelRequirement.SideBDescription</a></td>
-                                            <td>(Side @CertificationLabelRequirement.CertificationLabelRequirement.SideB)</td>
-                                        </tr>
-                                    }
-                                    <br />
-
-                                }
-                                else
-                                {
-                                    <text>N/A</text>
-                                }
-                                @if (Model.CertificationTypes.Count > 0)
-                                {
-                                    @foreach (var CertificationType in Model.CertificationTypes)
-                                    {
-                                        <tr>
-                                            <td>@CertificationType.CertificationType.TypeofCertificate: @CertificationType.CertificationType.Description</td>
-                                        </tr>
-                                    }
-                                }
-                                else
-                                {
-                                    <text>N/A</text>
-                                }
-                            </table>
-                            <h4>Device Firmware:</h4>
-                            <table class="table borderless">
-                                <tr>
-                                    <td>120.0.23</td>
-                                </tr>
-                            </table>
-                            <h4>Modem:</h4>
-                            <table class="table borderless">
-                                <tr>
-                                    <td>H/W: SARA U201 (Revision 1.0)</td>
-                                </tr>
-                                <tr>
-                                    <td>F/W: 23.60</td>
-                                </tr>
-                                <tr>
-                                    <td>IMEI Range: Leave as is / Do not program</td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div class="row">
-                <div class="col-md-2"></div>
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label class="control-label">&nbsp;</label>
-                        <a asp-action="Main" asp-controller="BuildSheets" class="btn btn-block btn-default">Back to Home</a>
+                                    <tr>
+                                        @if (Model.ImeiGate != null)
+                                        {
+                                            <td>IMEI Range: @Model.ImeiGate</td>
+                                        }
+                                        else
+                                        {
+                                            <td>IMEI Range: Leave as is / Do not program</td>
+                                        }
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="control-label">&nbsp;</label>
+                            <a asp-action="Main" asp-controller="BuildSheets" class="btn btn-block btn-default">Back to Home</a>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="control-label">&nbsp;</label>
+                            <a asp-action="Edit" asp-controller="BuildSheets" asp-route-id="@Model.Id" class="btn btn-block btn-success">Edit</a>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="control-label">&nbsp;</label>
+                            <a asp-action="PrintPDF" asp-route-id="@Model.Id" class="btn btn-block btn-primary" target="_blank">Download As PDF</a>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label class="control-label">&nbsp;</label>
-                        <a asp-action="Edit" asp-controller="BuildSheets" asp-route-id="@Model.Id" class="btn btn-block btn-success">Edit</a>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label class="control-label">&nbsp;</label>
-                        <a asp-action="PrintPDF" asp-route-id="@Model.Id" class="btn btn-block btn-primary" target="_blank">Download As PDF</a>
-                    </div>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 

@@ -18,6 +18,8 @@
             <input type="submit" value="Search" class="btn btn-info" />
 
             <a asp-controller="TesterParameters" asp-action="Create" class="btn btn-primary" style="margin-left: 15px;">Create</a>
+
+            <a asp-controller="TesterParameters" asp-action="MassEditing" class="btn btn-warning" style="margin-left: 15px;">Mass Editing</a>
         </div>
         <br />
     </div>
@@ -43,6 +45,9 @@
                         <th width="40%">
                             Parameters
                         </th>
+                        <th width="40%">
+                            Revision
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,10 +57,13 @@
                         {
                             <tr>
                                 <td>
-                                    <a asp-controller="TesterParameters" asp-action="Details" asp-route-name="@device.DeviceName">@device.DeviceName</a>
+                                    <a asp-controller="TesterParameters" asp-action="Details" asp-route-revision="@device.Revision" asp-route-name="@device.DeviceName">@device.DeviceName</a>
                                 </td>
                                 <td>
                                     @device.Parameter
+                                </td>
+                                <td>
+                                    @device.Revision
                                 </td>
                             </tr>
                         }

@@ -11,7 +11,7 @@ namespace BuildSheets.Helpers
     [Serializable]
     [DesignerCategory("code")]
     [XmlType(AnonymousType = true)]
-    [XmlRoot(Namespace = "", IsNullable = false, ElementName ="ProductCode")]
+    [XmlRoot(Namespace = "", IsNullable = false, ElementName = "ProductCode")]
     public partial class TesterParameterCode
     {
         [XmlElement("DeviceParameters")]

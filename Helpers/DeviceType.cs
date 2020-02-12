@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,6 +10,7 @@ namespace BuildSheets.Helpers
     public class DeviceType
     {
         public int Id { get; set; }
+        [Required(ErrorMessage = "Please select a device type.")]
         public string Name { get; set; }
     }
 
@@ -21,7 +23,8 @@ namespace BuildSheets.Helpers
             {
                 new DeviceType(){Id =1, Name = "GO7"},
                 new DeviceType(){Id =2, Name = "GO8"},
-                new DeviceType(){Id =3, Name = "GO9"}
+                new DeviceType(){Id =3, Name = "GO9"},
+                new DeviceType(){Id =4, Name = "Test"} // for testing purpose only
             };
         }
 
@@ -69,7 +72,7 @@ namespace BuildSheets.Helpers
                 .Select(v => new SelectListItem
                 {
                     Text = v.ToString(),
-                    Value = "ModemIncludeList|"+v.ToString(),
+                    Value = "ModemIncludeList|" + v.ToString(),
                     //Value = ((int)v).ToString(),
                     Group = modemGroup
                 }).ToList();
@@ -78,7 +81,7 @@ namespace BuildSheets.Helpers
             List<SelectListItem> modemExcludeList = Enum.GetValues(typeof(ModemExcludeList)).Cast<ModemExcludeList>().Select(v => new SelectListItem
             {
                 Text = v.ToString(),
-                Value = "ModemExcludeList|"+v.ToString(),
+                Value = "ModemExcludeList|" + v.ToString(),
                 //Value = ((int)v).ToString(),
                 Group = modemExcludeGroup
             }).ToList();
@@ -98,11 +101,19 @@ namespace BuildSheets.Helpers
             GO9.AddRange(firmItemList);
             GO9.AddRange(modemIncludeList);
 
+            /// Use this for testing purpose otherwise make this block as commented
+            /// 
+            List<SelectListItem> Test = new List<SelectListItem>();
+            Test.AddRange(deviceItemList);
+            Test.AddRange(firmItemList);
+            Test.AddRange(modemIncludeList);
+
             _devicesList = new List<ListOfDevices>()
             {
                 new ListOfDevices(){Id =1, Name = GO7, attr="GO7"},
                 new ListOfDevices(){Id =2, Name = GO8, attr="GO8"},
-                new ListOfDevices(){Id =3, Name = GO9, attr="GO9"}
+                new ListOfDevices(){Id =3, Name = GO9, attr="GO9"},
+                new ListOfDevices(){Id =4, Name = GO9, attr="Test"} // for testing purpose only
             };
         }
 

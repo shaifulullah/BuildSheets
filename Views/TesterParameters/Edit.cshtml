@@ -13,7 +13,8 @@
         <form asp-action="Edit">
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="Type" />
-            <input type="hidden" asp-for="Index" />
+            <input type="hidden" asp-for="Revision" />
+            @*<input type="hidden" asp-for="Index" />*@
             <input type="hidden" name="oldParameterName" value="@Model.ParameterName" />
             <input type="hidden" name="oldParameterValue" value="@Model.ParameterValue" />
             <div class="form-group">
@@ -36,6 +37,7 @@
 <div>
     <a asp-controller="TesterParameters" asp-action="Details" asp-route-name="@ViewBag.DeviceName">Back to Details</a>
 </div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

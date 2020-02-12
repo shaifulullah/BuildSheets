@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,12 +31,11 @@ namespace BuildSheets.Models
             APN = vm.APN;
             CustomerGateway = vm.CustomerGateway;
             ProductImageURL = vm.ProductImageURL;
+            TesterParameterId = vm.TesterParameterId;
         }
         //BuildSheets Attributes
         [Key]
-        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        //[Key]
         [Display(Name = "Product Name"), Required]
         public string ProductName { get; set; }
         public string Description { get; set; }
@@ -59,10 +59,20 @@ namespace BuildSheets.Models
         public string CustomerGateway { get; set; }
         [Display(Name = "Product Image Link")]
         public string ProductImageURL { get; set; }
+        [Display(Name = "Tester Parameter")]
+        public int? TesterParameterId { get; set; }
 
         //one to one relationship:
-        //public virtual TesterParameter TesterParameter { get; set; }
-
+        [NotMapped]
+        public virtual TesterParameter TesterParameter { get; set; }
+        [NotMapped]
+        public string ImeiGate { get; set; }
+        [NotMapped]
+        public string ModemHwName { get; set; }
+        [NotMapped]
+        public string ModemFirmware { get; set; }
+        [NotMapped]
+        public string DeviceFirmware { get; set; }
         ////one to many relationships:
         //public Product Product { get; set; }
         //public DeviceFirmware DeviceFirmware { get; set; }

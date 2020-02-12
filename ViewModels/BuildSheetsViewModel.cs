@@ -31,7 +31,7 @@ namespace BuildSheets.ViewModels
             APN = bs.APN;
             CustomerGateway = bs.CustomerGateway;
             ProductImageURL = bs.ProductImageURL;
-
+            TesterParameterId = bs.TesterParameterId;
         }
         public int Id { get; set; }
         [Display(Name = "Product Name"), Required]
@@ -132,6 +132,10 @@ namespace BuildSheets.ViewModels
         public SelectList TypeofCertificateList { get; set; }
         public List<int> TypeofCertificateIds { get; set; }
         public virtual ICollection<CertificationTypeBuildSheet> CertificationTypes { get; set; }
+
+        [Display(Name = "Tester Parameter", GroupName = "Software")]
+        public SelectList TesterParameterList { get; set; }
+        public int? TesterParameterId { get; set; }
 
     }
 }

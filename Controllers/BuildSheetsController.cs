@@ -608,6 +608,37 @@ namespace BuildSheets.Controllers
         {
             return _context.CertificationTypeBuildSheets.Where(e => e.BuildSheetId == BuildSheetId);
         }
+
+        public SelectList SetTesterParameterList(BuildSheetsViewModel vm)
+        {
+            List<TesterParameter> testerParameters = _context.TesterParameters.ToList();
+            List<SelectListItem> items = new List<SelectListItem>();
+            items.Add(new SelectListItem()
+            {
+                Text = "",
+                Value = ""
+            });
+            foreach (var item in testerParameters)
+            {
+                items.Add(new SelectListItem()
+                {
+                    Text = item.DeviceName + " - Rev" + item.Revision,
+                    Value = item.Id.ToString(),
+                });
+            }
+
+            SelectList ddl = new SelectList(items, "Value", "Text", null);
+
+            var a = ddl.GetEnumerator();
+            while (a.MoveNext())
+            {
+                if (a.Current.Value == vm.TesterParameterId.ToString())
+                {
+                    a.Current.Selected = true;
+                }
+            }
+            return ddl;
+        }
         #endregion
 
         #region Set Middle Tables
@@ -1364,6 +1395,27 @@ namespace BuildSheets.Controllers
             }
             vm.TypeofCertificateList = new SelectList(items, "Value", "Text", null, "Group.Name");
 
+            var testerParameterList = _context.TesterParameters.ToList();
+            List<SelectListItem> testerParameters = new List<SelectListItem>();
+
+            testerParameters.Add(new SelectListItem
+            {
+                Text = "",
+                Value = "",
+            });
+            for (int i = 0; i < testerParameterList.Count; i++)
+            {
+                TesterParameter testerParameter = testerParameterList[i];
+
+                testerParameters.Add(new SelectListItem
+                {
+                    Text = testerParameter.DeviceName + " - Rev" + testerParameter.Revision,
+                    Value = testerParameter.Id.ToString(),
+                    //Group = new SelectListGroup { Name = "Certification Label Requirement" }
+                });
+            }
+            vm.TesterParameterList = new SelectList(testerParameters, "Value", "Text", -1);
+
             return (vm);
 
 
@@ -1415,7 +1467,7 @@ namespace BuildSheets.Controllers
             "Revision,RevisionURL,UpdatedBy,ProductUpdatedOn,APN,CustomerGateway,ECOId,ProductImageURL,InternalSubAssemblyBoardId,BaseBoardId,"+
             "SubBoardId,OtherHardwaresDictonary,InsertsDictonary,LabelsDictonary,PackagingsDictonary,DocumentIds,WorkInstructionIds,"+
             "GeotabAssemblyDrawingIds,ContractManufactureAssemblyDrawingIds,TesterSoftwareIds,"+
-            "CertificationLabelRequirementIds,TypeofCertificateIds")] BuildSheetsViewModel Vm)
+            "CertificationLabelRequirementIds,TypeofCertificateIds,TesterParameterId")] BuildSheetsViewModel Vm)
         {
             int buildSheetId = 0;
             if (ModelState.IsValid)
@@ -1499,6 +1551,11 @@ namespace BuildSheets.Controllers
                         List<CertificationTypeBuildSheet> certificationTypeBuildSheet = SetCertificationType(Vm.TypeofCertificateIds, buildSheetId);
                         NewBs.CertificationTypes = certificationTypeBuildSheet;
                     }
+                    //if (Vm.TesterParameterId > 0)
+                    //{
+                    //    List<CertificationTypeBuildSheet> certificationTypeBuildSheet = SetCertificationType(Vm.TypeofCertificateIds, buildSheetId);
+                    //    NewBs.TesterParameterId = certificationTypeBuildSheet;
+                    //}
                     await _context.SaveChangesAsync();
                 }
                 catch (Exception ex)
@@ -1560,6 +1617,7 @@ namespace BuildSheets.Controllers
             vm.TesterSoftwareList = SetTesterSoftwareList(vm);
             vm.CertificationLabelRequirementList = SetCLrequirementList(vm);
             vm.TypeofCertificateList = SetCertificateList(vm);
+            vm.TesterParameterList = SetTesterParameterList(vm);
 
 
             return View(vm);
@@ -1574,7 +1632,7 @@ namespace BuildSheets.Controllers
             "Revision,RevisionURL,UpdatedBy,ProductUpdatedOn,APN,CustomerGateway,ECOId,ProductImageURL,InternalSubAssemblyBoardId,LinkUrls,"+
             "BaseBoardId,SubBoardId,OtherHardwaresDictonary,InsertsDictonary,LabelsDictonary,PackagingsDictonary,DocumentIds,"+
             "WorkInstructionIds,GeotabAssemblyDrawingIds,ContractManufactureAssemblyDrawingIds,TesterSoftwareIds,"+
-            "CertificationLabelRequirementIds,TypeofCertificateIds")] BuildSheetsViewModel vm, int id)
+            "CertificationLabelRequirementIds,TypeofCertificateIds,TesterParameterId")] BuildSheetsViewModel vm, int id)
         {
             if (id != vm.Id)
             {
@@ -1617,6 +1675,7 @@ namespace BuildSheets.Controllers
                     existingBuildSheet.Revision = vm.Revision;
                     existingBuildSheet.RevisionURL = vm.RevisionURL;
                     existingBuildSheet.ProductImageURL = vm.ProductImageURL;
+                    existingBuildSheet.TesterParameterId = vm.TesterParameterId;
                     existingBuildSheet.BuildSheetsInternalSubAssemblyBoard = SetInternalSubAssemblyBoard(vm.InternalSubAssemblyBoardId, existingBuildSheet.Id);
                     existingBuildSheet.BaseBoards = SetBaseBoard(vm.BaseBoardId, existingBuildSheet.Id);
                     existingBuildSheet.SubBoards = SetSubBoard(vm.SubBoardId, existingBuildSheet.Id);

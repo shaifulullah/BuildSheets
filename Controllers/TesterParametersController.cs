@@ -26,6 +26,7 @@ namespace BuildSheets.Controllers
             _context = context;
             testerParametersRepository = testerParameters;
         }
+        #region Mass Editing
         public IActionResult MassEditing()
         {
             GetDeviceType devicetype = new GetDeviceType();
@@ -33,90 +34,118 @@ namespace BuildSheets.Controllers
             GetListOfDevices newdeviceList = new GetListOfDevices();
             var listing = newdeviceList.GetListofDevices();
 
-
             return View(listing);
         }
 
         [HttpPost]
-        public IActionResult MassEditing(ListOfDevices model, string ChangeTypeId, string param, string ParameterValue)
+        public async Task<IActionResult> MassEditing(string ChangeTypeId, string param, string ParameterValue)
         {
-            GetDeviceType getDeviceType = new GetDeviceType();
-            List<TesterParameter> deviceList = testerParametersRepository.Main(getDeviceType.ListofDevices().
-                Where(d => d.Id == Convert.ToInt32(ChangeTypeId)).FirstOrDefault()?.Name).ToList();
-
-            string[] parentChild = param.Split("|");
-            string parentParamerter = parentChild[0];
-            string childParamerter = parentChild[1];
-
-            foreach (TesterParameter devices in deviceList)
+            if (ChangeTypeId != null && param != null && ParameterValue != null)
             {
-                EditTesterParameter editTesterParameter = new EditTesterParameter();
-                editTesterParameter.Id = devices.Id;
-                editTesterParameter.ParameterName = parentParamerter;
-                editTesterParameter.Type = (TesterParameterCodeType)System.Enum.Parse(typeof(TesterParameterCodeType), parentParamerter);
-                editTesterParameter.ParameterValue = ParameterValue;
-                testerParametersRepository.Edit(childParamerter, string.Empty, editTesterParameter);
+                GetDeviceType getDeviceType = new GetDeviceType();
+                var listOfDevice = getDeviceType.ListofDevices().Where(d => d.Id == Convert.ToInt32(ChangeTypeId)).FirstOrDefault().Name;
+                List<TesterParameter> deviceList = testerParametersRepository.Main(listOfDevice).ToList();
+                List<TesterParameter> tp = testerParametersRepository.Main(listOfDevice).ToList();
+                List<TesterParameter> tpList = new List<TesterParameter>();
+
+
+                foreach (var device in deviceList)
+                {
+                    foreach (var iteminTp in tp)
+                    {
+                        if (tpList.Count < 1)
+                        {
+                            tpList.Add(device);
+                        }
+                        else if (iteminTp.DeviceName.ToLower() == device.DeviceName.ToLower() && iteminTp.Revision < device.Revision)
+                        {
+                            tpList.Remove(iteminTp);
+                            tpList.Add(device);
+                        }
+                        else if (iteminTp.DeviceName.ToLower() != device.DeviceName.ToLower())
+                        {
+                            tpList.Add(device);
+                        }
+                        else if (iteminTp.DeviceName.ToLower() == device.DeviceName.ToLower() && iteminTp.Revision > device.Revision)
+                        {
+                            break;
+                        }
+                    }
+                }
+                //foreach (var device in deviceList)
+                //{
+                //    if (tp.Count < 1)
+                //    {
+                //        tp.Add(device);
+                //    }
+                //    else
+                //    {
+                //        foreach (var iteminTp in tp)
+                //        {
+                //            if (iteminTp.DeviceName.ToLower() == device.DeviceName.ToLower() && iteminTp.Revision < device.Revision)
+                //            {
+                //                tp.Remove(iteminTp);
+                //                tp.Add(device);
+                //                break;
+                //            }
+                //            else if (iteminTp.DeviceName.ToLower() != device.DeviceName.ToLower())
+                //            {
+                //                tp.Add(device);
+                //                break;
+                //            }
+                //            else if (iteminTp.DeviceName.ToLower() == device.DeviceName.ToLower() && iteminTp.Revision > device.Revision)
+                //            {
+                //                break;
+                //            }
+                //        }
+                //    }
+                //}
+
+
+                string[] parentChild = param.Split("|");
+                string parentParameter = parentChild[0];
+                string childParameter = parentChild[1];
+
+                foreach (TesterParameter devices in deviceList)
+                {
+                    EditTesterParameter editTesterParameter = new EditTesterParameter();
+                    editTesterParameter.Id = devices.Id;
+                    editTesterParameter.ParameterName = childParameter;
+                    editTesterParameter.ParameterValue = ParameterValue;
+                    editTesterParameter.Type = (TesterParameterCodeType)System.Enum.Parse(typeof(TesterParameterCodeType), parentParameter);
+
+                    var product = testerParametersRepository.Edit(childParameter, string.Empty, editTesterParameter);
+
+                    _context.Update(product);
+                    await _context.SaveChangesAsync();
+                }
+                return MassEditing();
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Please make sure you have entered value in each of the field above.";
+                return MassEditing();
             }
 
-            return MassEditing();
         }
-        #region OLD
-        //public IActionResult MassEditing()
-        //{
-
-        //    List<SelectListItem> deviceList = Enum.GetValues(typeof(DeviceCategory)).Cast<DeviceCategory>().Select(v => new SelectListItem
-        //    {
-        //        Text = v.ToString(),
-        //        Value = ((int)v).ToString()
-        //    }).ToList();
-        //    return View(deviceList);
-        //}
-
-        //[HttpPost]
-        //public JsonResult LoadParameterList()
-        //{
-        //    SelectListGroup deviceGroup = new SelectListGroup() { Name = "Device Parameter" };
-        //    List<SelectListItem> deviceItemList = Enum.GetValues(typeof(DeviceParametersName)).Cast<DeviceParametersName>().
-        //        Select(v => new SelectList
-        //        {
-        //            Text = v.ToString(),
-        //            Value = ((int)v).ToString(),
-        //            Group = deviceGroup
-        //        }).ToList();
-
-        //    SelectListGroup firmGroup = new SelectListGroup() { Name = "Firmware Gates" };
-        //    List<SelectListItem> firmItemList = Enum.GetValues(typeof(FirmwareGatesName)).Cast<FirmwareGatesName>().Select(v => new SelectListItem
-        //    {
-        //        Text = v.ToString(),
-        //        Value = ((int)v).ToString(),
-        //        Group = firmGroup
-        //    }).ToList();
-
-        //    SelectListGroup modemGroup = new SelectListGroup() { Name = "Modem Include" };
-        //    List<SelectListItem> modemIncludeList = Enum.GetValues(typeof(ModemIncludeList)).Cast<ModemIncludeList>().Select(v => new SelectListItem
-        //    {
-        //        Text = v.ToString(),
-        //        Value = ((int)v).ToString(),
-        //        Group = modemGroup
-        //    }).ToList();
-
-        //    SelectListGroup modemExcludeGroup = new SelectListGroup() { Name = "Modem Exclude" };
-        //    List<SelectListItem> modemExcludeList = Enum.GetValues(typeof(ModemExcludeList)).Cast<ModemExcludeList>().Select(v => new SelectListItem
-        //    {
-        //        Text = v.ToString(),
-        //        Value = ((int)v).ToString(),
-        //        Group = modemExcludeGroup
-        //    }).ToList();
-
-        //    List<SelectListItem> GO7 = new List<SelectListItem>();
-        //    GO7.AddRange(deviceItemList);
-        //    GO7.AddRange(firmItemList);
-        //    GO7.AddRange(modemExcludeList);
-
-        //    return Json(GO7);
-        //}
-
         #endregion
+
+        #region Checks
+        public bool CheckIsEditable(string name, int revision)
+        {
+            bool isEditable = false;
+            var nextRevision = _context.TesterParameters.FirstOrDefault(x => x.DeviceName.ToLower() == name.ToLower() && x.Revision == (revision + 1));
+
+            if (nextRevision == null)
+            {
+                isEditable = true;
+            }
+
+            return isEditable;
+        }
+        #endregion
+
+
         public IActionResult Main(string name)
         {
             var testerParameter = testerParametersRepository.Main(name);
@@ -132,10 +161,11 @@ namespace BuildSheets.Controllers
             }
         }
 
-        public IActionResult Details(string name)
+        public IActionResult Details(string name, int revision)
         {
-            var DetailTesterParameter = testerParametersRepository.Details(name);
-
+            var DetailTesterParameter = testerParametersRepository.Details(name, revision);
+            bool isEditable = CheckIsEditable(name, revision);
+            ViewData["isEditable"] = isEditable;
             return View(DetailTesterParameter);
         }
         public IActionResult Create()
@@ -186,6 +216,11 @@ namespace BuildSheets.Controllers
             ViewBag.DeviceParameterName = dropDownListForDeviceParam;
             ViewBag.FirmwareGatesName = dropDownListForFirmwareGates;
             ViewBag.ModemIncludeList = dropDownListForModemInclude;
+
+            if (!string.IsNullOrWhiteSpace(TempData["AddBuildSheetConfirmation"] as string))
+            {
+                ViewData["AddBuildSheetConfirmation"] = TempData["AddBuildSheetConfirmation"];
+            }
             return View();
         }
 
@@ -212,9 +247,9 @@ namespace BuildSheets.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Edit(int id, TesterParameterCodeType type, string parameterName, string parameterValue, int index)
+        public IActionResult Edit(int id, TesterParameterCodeType type, string parameterName, string parameterValue, int revision/*int index*/)
         {
-            var product = await _context.TesterParameters.FindAsync(id);
+            var product = _context.TesterParameters.Where(tp => tp.Id == id && tp.Revision == revision).FirstOrDefault();
             if (product == null)
             {
                 return NotFound();
@@ -226,7 +261,8 @@ namespace BuildSheets.Controllers
                 Type = type,
                 ParameterName = parameterName,
                 ParameterValue = parameterValue,// GetParameter(type, product.Parameter, parameterName, index),
-                Index = index
+                Revision = revision
+                //Index = index
             };
 
             ViewBag.DeviceName = product.DeviceName;
@@ -240,18 +276,20 @@ namespace BuildSheets.Controllers
             if (ModelState.IsValid)
             {
                 var product = testerParametersRepository.Edit(oldParameterName, oldParameterValue, model);
-                _context.Update(product);
+
+                _context.TesterParameters.Add(product);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("Details", new { name = product.DeviceName });
+                return RedirectToAction("Details", new { name = product.DeviceName, revision = product.Revision });
             }
 
             return View(model);
         }
 
-        public async Task<IActionResult> Add(int id, TesterParameterCodeType type)
+        public async Task<IActionResult> Add(int id, TesterParameterCodeType type, int revision)
         {
-            var product = await _context.TesterParameters.FindAsync(id);
+            var product = _context.TesterParameters.Where(tp => tp.Id == id && tp.Revision == revision).FirstOrDefault();
+            //var product = await _context.TesterParameters.FindAsync(id);
             if (product == null)
             {
                 return NotFound();
@@ -345,16 +383,17 @@ namespace BuildSheets.Controllers
             if (ModelState.IsValid)
             {
                 var newParameter = testerParametersRepository.Add(model);
-                _context.Update(newParameter);
+                //_context.Update(newParameter);
+                _context.TesterParameters.Add(newParameter);
                 await _context.SaveChangesAsync();
                 //return RedirectToAction(nameof(Main), new { name = product.DeviceName });
-                return RedirectToAction("Details", new { name = newParameter.DeviceName });
+                return RedirectToAction("Details", new { name = newParameter.DeviceName, revision = newParameter.Revision });
             }
 
             return View(model);
         }
 
-        public async Task<IActionResult> Delete(int id, TesterParameterCodeType type, string parameterName, int index, string parameterValue)
+        public async Task<IActionResult> Delete(int id, TesterParameterCodeType type, string parameterName, int revision, string parameterValue)
         {
             var product = await _context.TesterParameters.FirstOrDefaultAsync(x => x.Id == id);
             if (product == null)
@@ -368,7 +407,8 @@ namespace BuildSheets.Controllers
                 Type = type,
                 ParameterName = parameterName,
                 ParameterValue = parameterValue,// GetParameter(type, product.Parameter, parameterName, index),
-                Index = index
+                Revision = revision
+                //Index = index
             };
 
             ViewBag.DeviceName = product.DeviceName;
@@ -381,7 +421,7 @@ namespace BuildSheets.Controllers
         {
             var device = testerParametersRepository.Delete(model);
 
-            return RedirectToAction("Details", new { name = device.DeviceName });
+            return RedirectToAction("Details", new { name = device.DeviceName, revision = device.Revision });
         }
 
         private string GetParameter(TesterParameterCodeType type, string sourceXml, string parameterName, int index)
@@ -393,6 +433,25 @@ namespace BuildSheets.Controllers
             return parameterNode[index]?.InnerText;
         }
 
+        public IActionResult UpdateBS(int id, string devicename, int revision)
+        {
+
+            var buildSheet = _context.BuildSheets.Where(bs => bs.ProductName.ToLower() == devicename.ToLower()).FirstOrDefault();
+            if (buildSheet != null)
+            {
+                buildSheet.TesterParameterId = id;
+                _context.Update(buildSheet);
+                _context.SaveChanges();
+                TempData["AddBuildSheetConfirmation"] = "Build Sheet has been updated";
+            }
+            else
+            {
+                TempData["AddBuildSheetConfirmation"] = "No buildsheet found";
+            }
+
+            return RedirectToAction("Details", new { name = devicename, revision });
+
+        }
         #region Web API
         // GET: TesterParameter/Details/5
         //Sample Query String https://localhost/BuildSheetsArea/TesterParameters/GetTesterParameterJson?searchTerms=ATT-GO9LTE

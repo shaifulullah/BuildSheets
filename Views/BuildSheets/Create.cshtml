@@ -184,6 +184,12 @@
                     <select asp-for="TypeofCertificateIds" class="form-control selectList" asp-items="Model.TypeofCertificateList"> </select>
                 </div>
             </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="TesterParameterList" class="control-label"></label>
+                    <select asp-for="TesterParameterId" asp-items="Model.TesterParameterList" class="form-control selectList"></select>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -283,7 +289,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="form-group hidden">
-                <input class="form-control" asp-for="UpdatedBy" value="@ViewBag.loggedInUser" />
+                <input class="form-control" type="text" asp-for="UpdatedBy" value="@ViewBag.loggedInUser" />
             </div>
         </div>
     </div>

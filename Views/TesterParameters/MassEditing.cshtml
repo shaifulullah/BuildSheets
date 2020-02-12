@@ -3,11 +3,13 @@
     ViewData["Title"] = "MassEditing";
 }
 
-
-<h1>MassEditing</h1>
+<h2>Mass Editing</h2>
+<hr />
+<span style="color: red">Please Note: The change you are making is permanent and will affect all the devices. Make sure provided information is correct before hit the SAVE button.</span>
 <form asp-action="MassEditing" id="formCreate">
     <div class="row">
         <div class="col-md-3">
+            <label>Please select device type:</label>
             <div class="form-group">
                 <select id="ChangeTypeId" class="form-control" name="ChangeTypeId" asp-items="ViewBag.ChangeTypeId">
                     <option>@null</option>
@@ -22,7 +24,7 @@
                 foreach (var selectList in Model) //creates all <select> fields for the different Approvers Change Types
                 {
                     <span class="hideSelect">
-                        <select asp-items="selectList.Name" name="Parameter" id="@selectList.attr" class="form-control parameters"></select>
+                        <select asp-items="selectList.Name" name="@selectList.attr" id="@selectList.attr" class="form-control parameters"></select>
                     </span>
                 }
             }
@@ -36,24 +38,30 @@
             </div>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group" id="save">
         <input type="submit" value="Save" class="btn btn-primary" />
     </div>
+    <div style="color:red">
+        @if (ViewBag.ErrorMessage != null)
+        {
+            @ViewBag.ErrorMessage;
+        }
+    </div>
 </form>
-
-
-
-
+<div>
+    <a asp-action="Main">Back to Search</a>
+</div>
 @section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script type="text/javascript">
-        $('.hideSelect').hide(); //hides the approvers because no Change Type has been selected
+        $('.hideSelect').hide(); //hides the parameters because no Change Type has been selected
         $("#ChangeTypeId").on("change", function () { //when the Change Type is selected
             var ChangeType = $(this).find(":selected").text(); //get the text of the selected option
-            var SelectList = $(".parameters"); //gets the lists with the approvers class
+            var SelectList = $(".parameters"); //gets the lists with the parameters class
             for (var i = 0; i < SelectList.length; i++) {
                 if ($(SelectList[i]).attr("Id") == ChangeType) { //checks if the id of the list matches the change type selected, then
                     $(SelectList[i]).parent().show(); //shows the <span> that the <select> is inside of
-                    $(SelectList[i]).attr("name", "param") //changes the name attribute to "UserRoleIds" -> this will be sent in the POST
+                    $(SelectList[i]).attr("name", "param") //changes the name attribute to "param" -> this will be sent in the POST
                 }
                 else { //does the opposite of the above,
                     $(SelectList[i]).parent().hide(); //hides the <span>
@@ -61,31 +69,6 @@
                     $(SelectList[i]).attr("name", ""); //removes the name UserRoleIds from the <select
                 }
             }
-        });
-    </script>
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#deviceList").change(function () {
-                //var dID = $(this).val();
-                $.post("LoadParameterList", {},
-                    function (data) {
-                        console.log(data);
-                        var select = $("#ParameterList");
-                        select.empty();
-                        select.append($('<option/>', {
-                            value: -1,
-                            text: "Select a Parameter"
-                        }));
-                        $.each(data, function (index, itemData) {
-                            select.append($('<option/>', {
-                                value: itemData.Value,
-                                text: itemData.Text,
-                                group: itemData.Group
-                            }));
-                        });
-                    });
-            });
         });
     </script>
 

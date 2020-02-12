@@ -10,7 +10,8 @@ namespace BuildSheets.Services
     public interface ITesterParameters
     {
         IEnumerable<TesterParameter> Main(string name);
-        TesterParameter Details(string name);
+        IEnumerable<TesterParameter> GetAll();
+        TesterParameter Details(string name, int revision);
         TesterParameter Create(AddTesterParameter model);
         TesterParameter Edit(string oldParameterName, string oldParameterValue, EditTesterParameter model);
         TesterParameter Add(EditTesterParameter model);

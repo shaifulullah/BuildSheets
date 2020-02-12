@@ -12,13 +12,14 @@
         <form asp-action="Add">
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="Type" />
+            <input type="hidden" asp-for="Revision" />
             <div class="form-group">
                 <label class="control-label">Parameter Name</label>
                 @*<input asp-for="ParameterName" class="form-control noWhiteSpaces" />*@
-                @*<span asp-validation-for="ParameterName" class="text-danger"></span>*@
+
                 @if (ViewBag.DeviceParameterName != null)
                 {
-                    <select class="combobox form-control noWhiteSpaces" name="ParameterName" role="combobox">
+                    <select asp-for="ParameterName" class="combobox form-control noWhiteSpaces" name="ParameterName" role="combobox">
                         @foreach (SelectListItem sli in ViewBag.DeviceParameterName)
                         {
                             <option value="@sli.Value">@sli.Text</option>
@@ -27,10 +28,23 @@
                 }
                 else if (ViewBag.FirmwareGatesName != null)
                 {
+                    <select asp-for="ParameterName" class="combobox form-control noWhiteSpaces" name="ParameterName" role="combobox">
+                        @foreach (SelectListItem sli in ViewBag.FirmwareGatesName)
+                        {
+                            if (sli.Value == "1")
+                            {
+                                <option value="@sli.Value" selected>@sli.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@sli.Value">@sli.Text</option>
+                            }
+                        }
+                    </select>
                 }
                 else if (ViewBag.ModemIncludeList != null)
                 {
-                    <select class="combobox form-control noWhiteSpaces" name="ParameterName" role="combobox">
+                    <select asp-for="ParameterName" class="combobox form-control noWhiteSpaces" name="ParameterName" role="combobox">
                         @foreach (SelectListItem sli in ViewBag.ModemIncludeList)
                         {
                             if (sli.Value == "1")
@@ -44,9 +58,9 @@
                         }
                     </select>
                 }
-                else if(ViewBag.ModemExcludeList != null)
+                else if (ViewBag.ModemExcludeList != null)
                 {
-                    <select class="combobox form-control noWhiteSpaces" name="ParameterName" role="combobox">
+                    <select asp-for="ParameterName" class="combobox form-control noWhiteSpaces" name="ParameterName" role="combobox">
                         @foreach (SelectListItem sli in ViewBag.ModemExcludeList)
                         {
                             if (sli.Value == "1")
@@ -60,8 +74,9 @@
                         }
                     </select>
                 }
-
+                <span asp-validation-for="ParameterName" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label class="control-label">Parameter Value</label>
                 <input asp-for="ParameterValue" class="form-control" />

@@ -19,6 +19,7 @@ namespace BuildSheets.Helpers
 
         [Required(ErrorMessage = "Please enter parameter value.")]
         public string ParameterValue { get; set; }
+        public int? Revision { get; set; }
         public int Index { get; set; }
     }
 }

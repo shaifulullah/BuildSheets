@@ -4,8 +4,11 @@ using BuildSheets.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
+using BuildSheets.Helpers;
 
 namespace BuildSheets.Repository
 {
@@ -61,6 +64,54 @@ namespace BuildSheets.Repository
                 //.Include(tp=>tp.TesterParameter).Where(bs=>bs.ProductName==bs.TesterParameter.DeviceName)
                 .FirstOrDefault(b => b.Id == id);
 
+            var testerParameter = _buildSheetsContext.TesterParameters.Where(g => g.Id == buildSheetDetails.TesterParameterId).FirstOrDefault();
+
+            if (testerParameter != null)
+            {
+                if (!string.IsNullOrEmpty(testerParameter.Parameter))
+                {
+                    var xmlSerializer = new XmlSerializer(typeof(TesterParameterCode));
+                    //testerParameter.TesterParameterCode = (TesterParameterCode)xmlSerializer.Deserialize(new StringReader(testerParameter.Parameter));
+                    var TesterParameterCode = (TesterParameterCode)xmlSerializer.Deserialize(new StringReader(testerParameter.Parameter));
+
+                    if (TesterParameterCode.ModemIncludeList.Parameters.Length > 0)
+                    {
+                        foreach (var parameter in TesterParameterCode.ModemIncludeList.Parameters)
+                        {
+                            if (parameter.Name.ToLower() == "modem")
+                            {
+                                buildSheetDetails.ModemHwName = parameter.InnerText;
+                            }
+                            else if (parameter.Name.ToLower() == "modemfirmware")
+                            {
+                                buildSheetDetails.ModemFirmware = parameter.InnerText;
+                            }
+                        }
+                    }
+
+                    if (TesterParameterCode.FirmwareGates.Parameters.Length > 0)
+                    {
+                        foreach (var parameter in TesterParameterCode.FirmwareGates.Parameters)
+                        {
+                            if (parameter.Name.ToLower() == "firmware")
+                            {
+                                buildSheetDetails.DeviceFirmware = parameter.InnerText;
+                            }
+                        }
+                    }
+
+                    if (TesterParameterCode.DeviceParameters.Parameters.Length > 0)
+                    {
+                        foreach (var parameter in TesterParameterCode.DeviceParameters.Parameters)
+                        {
+                            if (parameter.Name.ToLower() == "imeigate")
+                            {
+                                buildSheetDetails.ImeiGate = parameter.InnerText;
+                            }
+                        }
+                    }
+                }
+            }
             return buildSheetDetails;
         }
     }
