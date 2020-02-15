@@ -6,56 +6,60 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h3>Search Device</h3>
+@*<h3>Search Device</h3>
 
-<form asp-controller="TesterParameters" asp-action="Main" method="get">
-    <div class="row">
+    <form asp-controller="TesterParameters" asp-action="Main" method="get">
+        <div class="row">
+            <div class="col-md-3">
+                <input type="text" name="name" class="form-control" value="@Model?.DeviceName" />
+            </div>
+
+            <div class="col-md-2">
+                <input type="submit" value="Search" class="btn btn-info" />
+
+                <a asp-controller="TesterParameters" asp-action="Create" class="btn btn-primary" style="margin-left: 15px;">Create</a>
+            </div>
+            <br />
+        </div>
         <div class="col-md-3">
-            <input type="text" name="name" class="form-control" value="@Model?.DeviceName" />
+            <div class="alert-danger">
+                @if (ViewBag.ErrorMessage != null)
+                {@ViewBag.ErrorMessage}
+            </div>
         </div>
+    </form>*@
 
-        <div class="col-md-2">
-            <input type="submit" value="Search" class="btn btn-info" />
-
-            <a asp-controller="TesterParameters" asp-action="Create" class="btn btn-primary" style="margin-left: 15px;">Create</a>
-        </div>
-        <br />
-    </div>
-    <div class="col-md-3">
-        <div class="alert-danger">
-            @if (ViewBag.ErrorMessage != null)
-            {@ViewBag.ErrorMessage}
-        </div>
-    </div>
-</form>
-
-<br />
 @if (Model != null)
 {
     <div class="row">
-        <div class="col-md-12">
-            <h3>Details for @Model.DeviceName, Revision @Model.Revision</h3>
-            <a asp-controller="TesterParameters"
-               asp-action="UpdateBS"
-               asp-route-id="@Model.Id"
-               asp-route-devicename="@Model.DeviceName"
-               asp-route-revision="@Model.Revision"
-               class="btn btn-primary">
-                Update BuildSheet
-            </a>
-            @if (!string.IsNullOrEmpty(ViewBag.AddBuildSheetConfirmation))
-            {
-                <div class="row">
-                    <div col-md-12">
-                        <div class="form-control text-center">
-                            <b>@ViewBag.AddBuildSheetConfirmation</b>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
         <div class="col-md-8">
-            <h3>Device Parameters:</h3>
+            <h3>Details for @Model.DeviceName, Revision @Model.Revision</h3>
+        </div>
+    </div>
+    @*<div class="row">
+            <div class="col-md-8">
+                @if (ViewBag.enableUpdateBuildSheetButton)
+                {
+                    <a asp-controller="TesterParameters"
+                       asp-action="UpdateBS"
+                       asp-route-id="@Model.Id"
+                       asp-route-devicename="@Model.DeviceName"
+                       asp-route-revision="@Model.Revision"
+                       class="btn btn-primary">
+                        Update BuildSheet
+                    </a>
+                }
+                @if (!string.IsNullOrEmpty(ViewBag.AddBuildSheetConfirmation))
+                {
+                    <div class="alert-danger">
+                        <b>@ViewBag.AddBuildSheetConfirmation</b>
+                    </div>
+                }
+            </div>
+        </div>*@
+    <div class="row">
+        <div class="col-md-8">
+            <h4>Device Parameters:</h4>
             <table class="table">
                 <thead>
                     <tr>
@@ -140,10 +144,9 @@
             </table>
         </div>
     </div>
-
     <div class="row">
         <div class="col-md-8">
-            <h3>Firmware Gates:</h3>
+            <h4>Firmware Gates:</h4>
             <table class="table">
                 <thead>
                     <tr>
@@ -231,7 +234,7 @@
 
     <div class="row">
         <div class="col-md-8">
-            <h3>Modem Include List:</h3>
+            <h4>Modem Include List:</h4>
             <table class="table">
                 <thead>
                     <tr>
@@ -319,7 +322,7 @@
 
     <div class="row">
         <div class="col-md-8">
-            <h3>Modem Exclude List:</h3>
+            <h4>Modem Exclude List:</h4>
             <table class="table">
                 <thead>
                     <tr>
@@ -402,7 +405,40 @@
             </table>
         </div>
     </div>
-    <div>
-        <a asp-controller="TesterParameters" asp-action="Main" asp-route-name="@Model.DeviceName">Back to List</a>
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-1">
+            @if (ViewBag.enableUpdateBuildSheetButton)
+            {
+                <a asp-controller="TesterParameters"
+                   asp-action="UpdateBS"
+                   asp-route-id="@Model.Id"
+                   asp-route-devicename="@Model.DeviceName"
+                   asp-route-revision="@Model.Revision"
+                   class="btn btn-primary">
+                    Update BuildSheet
+                </a>
+            }
+        </div>
+
+        <div class="col-md-1">
+            <a asp-controller="TesterParameters" asp-action="Main" asp-route-name="@Model.DeviceName" class="btn btn-primary">Back to List</a>
+        </div>
     </div>
+    <br />
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            @if (!string.IsNullOrEmpty(ViewBag.AddBuildSheetConfirmation))
+            {
+
+
+                <div class="form-control text-center">
+                    <b>@ViewBag.AddBuildSheetConfirmation</b>
+                </div>
+
+            }
+        </div>
+    </div>
+
 }

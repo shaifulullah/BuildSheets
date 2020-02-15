@@ -1426,19 +1426,24 @@ namespace BuildSheets.Controllers
         #endregion
 
         // GET: BuildSheetsArea/BuildSheets
-        public IActionResult Main(string name)
+        //public IActionResult Main(string name)
+        //{
+        //    var buildSheet = buildSheetsRepository.Main(name);
+        //    if (!string.IsNullOrWhiteSpace(name) && buildSheet == null)
+        //    {
+        //        ViewBag.ErrorMessage = "No Result found";
+        //        return View(buildSheet);
+        //    }
+        //    else
+        //    {
+        //        ViewBag.SearchString = name;
+        //        return View(buildSheet);
+        //    }
+        //}
+        public IActionResult Main()
         {
-            var buildSheet = buildSheetsRepository.Main(name);
-            if (!string.IsNullOrWhiteSpace(name) && buildSheet == null)
-            {
-                ViewBag.ErrorMessage = "No Result found";
-                return View(buildSheet);
-            }
-            else
-            {
-                ViewBag.SearchString = name;
-                return View(buildSheet);
-            }
+            var buildSheet = _context.BuildSheets.ToList();
+            return View(buildSheet);
         }
         public IActionResult Details(int? Id)
         {

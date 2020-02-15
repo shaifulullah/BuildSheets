@@ -40,6 +40,16 @@ namespace BuildSheets
             services.AddTransient<ITesterParameters, TesterParametersRepository>();
             services.AddTransient<IBuildSheets, BuildSheetsRepository>();
             //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(5);
+                options.Cookie.HttpOnly = true;
+                //make the cookie essential
+                options.Cookie.IsEssential = true;
+            });
+
+
             services.AddMvc(option =>option.EnableEndpointRouting =false).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             
@@ -56,7 +66,9 @@ namespace BuildSheets
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseSession();
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
@@ -64,8 +76,9 @@ namespace BuildSheets
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Main}/{id?}");
             });
+            app.UseCookiePolicy();
         }
     }
 }

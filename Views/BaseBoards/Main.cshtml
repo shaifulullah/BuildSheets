@@ -1,0 +1,77 @@
+﻿@model IEnumerable<BaseBoard>
+
+@{
+    ViewData["Title"] = "Main";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-3">
+        <a asp-controller="BaseBoards" asp-action="Create" class="btn btn-primary" style="margin-left: 15px;">Create</a>
+
+        @*<a asp-controller="BaseBoards" asp-action="MassEditing" class="btn btn-warning" style="margin-left: 15px;">Mass Editing</a>*@
+    </div>
+</div>
+<h3>Search All Baseboards</h3>
+
+@if (Model != null)
+{
+    <div class="row">
+        <div class="col-md-8">
+            <div class="table-responsive">
+                <table class="table" id="DetailTableBaseBoard">
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                URL
+                            </th>
+                            <th>
+                                Revision
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(m => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(m => item.URL)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(m => item.Rev)
+                                </td>
+                                <td>
+                                    <a asp-controller="TesterParameters"
+                                       asp-action="Edit"
+                                       asp-route-id=""
+                                       asp-route-type=""
+                                       asp-route-parameterName=""
+                                       asp-route-parameterValue=""
+                                       asp-route-revision="">
+                                        Edit
+                                    </a> |
+                                    <a asp-controller="TesterParameters"
+                                       asp-action="Delete"
+                                       asp-route-id=""
+                                       asp-route-type=""
+                                       asp-route-parameterName=""
+                                       asp-route-parameterValue=""
+                                       asp-route-revision="">
+                                        Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

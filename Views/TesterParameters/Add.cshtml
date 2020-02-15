@@ -19,7 +19,7 @@
 
                 @if (ViewBag.DeviceParameterName != null)
                 {
-                    <select asp-for="ParameterName" class="combobox form-control noWhiteSpaces" name="ParameterName" role="combobox">
+                    <select asp-for="ParameterName" class="selectList form-control noWhiteSpaces" name="ParameterName" role="selectList">
                         @foreach (SelectListItem sli in ViewBag.DeviceParameterName)
                         {
                             <option value="@sli.Value">@sli.Text</option>
@@ -28,7 +28,7 @@
                 }
                 else if (ViewBag.FirmwareGatesName != null)
                 {
-                    <select asp-for="ParameterName" class="combobox form-control noWhiteSpaces" name="ParameterName" role="combobox">
+                    <select asp-for="ParameterName" class="selectList form-control noWhiteSpaces" name="ParameterName" role="selectList">
                         @foreach (SelectListItem sli in ViewBag.FirmwareGatesName)
                         {
                             if (sli.Value == "1")
@@ -44,7 +44,7 @@
                 }
                 else if (ViewBag.ModemIncludeList != null)
                 {
-                    <select asp-for="ParameterName" class="combobox form-control noWhiteSpaces" name="ParameterName" role="combobox">
+                    <select asp-for="ParameterName" class="selectList form-control noWhiteSpaces" name="ParameterName" role="selectList">
                         @foreach (SelectListItem sli in ViewBag.ModemIncludeList)
                         {
                             if (sli.Value == "1")
@@ -60,7 +60,7 @@
                 }
                 else if (ViewBag.ModemExcludeList != null)
                 {
-                    <select asp-for="ParameterName" class="combobox form-control noWhiteSpaces" name="ParameterName" role="combobox">
+                    <select asp-for="ParameterName" class="selectList form-control noWhiteSpaces" name="ParameterName" role="selectList">
                         @foreach (SelectListItem sli in ViewBag.ModemExcludeList)
                         {
                             if (sli.Value == "1")
@@ -91,7 +91,7 @@
 
 <div>
     @*<a asp-action="Main" asp-route-name="@ViewBag.DeviceName">Back to List</a>*@
-    <a asp-controller="TesterParameters" asp-action="Details" asp-route-name="@ViewBag.DeviceName">Back to Details</a>
+    <a asp-controller="TesterParameters" asp-action="Details" asp-route-name="@ViewBag.DeviceName" asp-route-revision="@Model.Revision">Back to Details</a>
 </div>
 
 @section Scripts {
@@ -116,8 +116,10 @@
         });
     </script>
     <script>
-        $(".combobox").select2({
-            tags: true
+        $(".selectList").select2({
+            placeholder: 'Select an Option',
+            width: 'element',
+            allowClear: true
         });
     </script>
 }

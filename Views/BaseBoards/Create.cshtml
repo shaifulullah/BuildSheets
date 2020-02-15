@@ -1,0 +1,140 @@
+﻿@model IEnumerable<BaseBoard>
+@{
+    ViewData["Title"] = "Create";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Create New Baseboard</h3>
+
+<body>
+    <table id="tblBaseBoards" class="table" cellpadding="0" cellspacing="0">
+        <thead>
+            <tr>
+                <th style="width:150px">Name</th>
+                <th style="width:150px">URL</th>
+                <th style="width:150px">Revision</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (BaseBoard baseBoard in Model)
+            {
+                <tr>
+                    <td>@baseBoard.Name</td>
+                    <td>@baseBoard.URL</td>
+                    <td>@baseBoard.Rev</td>
+                    <td><input type="button" value="Remove" onclick="Remove(this)" /></td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td><input type="text" id="txtName" /></td>
+                <td><input type="text" id="txtURL" /></td>
+                <td><input type="text" id="txtRev" /></td>
+                <td><input type="button" id="btnAdd" value="Add" /></td>
+            </tr>
+        </tfoot>
+    </table>
+    <br />
+
+    <div class="row">
+        <div class="col-md-3">
+            <input type="button" id="btnSave" class="btn btn-primary" value="Save All" />
+            <a asp-controller="BaseBoards" asp-action="Main" class="btn btn-primary" style="margin-left: 15px;">Back To List</a>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+    <script type="text/javascript">
+        $("body").on("click", "#btnAdd", function () {
+            //Reference the Name and Country TextBoxes.
+            var txtName = $("#txtName");
+            if (txtName.val() == "")
+            {
+                alert("Name can not be empty")
+                return;
+            }
+            var txtURL = $("#txtURL");
+            var txtRev = $("#txtRev");
+            if (txtRev.val() == "")
+            {
+                alert("Revision can not be empty")
+                return;
+            }
+
+            //Get the reference of the Table's TBODY element.
+            var tBody = $("#tblBaseBoards > TBODY")[0];
+
+            //Add Row.
+            var row = tBody.insertRow(-1);
+
+            //Add Name cell.
+            var cell = $(row.insertCell(-1));
+            cell.html(txtName.val());
+
+            //Add URL cell.
+            cell = $(row.insertCell(-1));
+            cell.html(txtURL.val());
+
+            //Add Revision cell.
+            cell = $(row.insertCell(-1));
+            cell.html(txtRev.val());
+
+            //Add Button cell.
+            cell = $(row.insertCell(-1));
+            var btnRemove = $("<input />");
+            btnRemove.attr("type", "button");
+            btnRemove.attr("onclick", "Remove(this);");
+            btnRemove.val("Remove");
+            cell.append(btnRemove);
+
+            //Clear the TextBoxes.
+            txtName.val("");
+            txtURL.val("");
+            txtRev.val("");
+        });
+
+        function Remove(button) {
+            //Determine the reference of the Row using the Button.
+            var row = $(button).closest("TR");
+            var table = $("#tblBaseBoards")[0];
+            table.deleteRow(row[0].rowIndex);
+
+            //// USE THIS IF USER CONFIRMATION IS REQUIRED FOR DELETE
+            //var name = $("TD", row).eq(0).html();
+            //if (confirm("Do you want to delete: " + name)) {
+            //    //Get the reference of the Table.
+            //    var table = $("#tblBaseBoards")[0];
+            //    //Delete the Table row using it's Index.
+            //    table.deleteRow(row[0].rowIndex);
+            //}
+        };
+
+        $("body").on("click", "#btnSave", function () {
+            //Loop through the Table rows and build a JSON array.
+            var baseBoards = new Array();
+            $("#tblBaseBoards TBODY TR").each(function () {
+                var row = $(this);
+                var baseBoard = {};
+                baseBoard.Name = row.find("TD").eq(0).html();
+                baseBoard.URL = row.find("TD").eq(1).html();
+                baseBoard.Rev = row.find("TD").eq(2).html();
+                baseBoards.push(baseBoard);
+            });
+
+            //Send the JSON array to Controller using AJAX.
+            $.ajax({
+                type: "POST",
+                url: "/BuildSheetsArea/BaseBoards/InsertBaseBoards",
+                data: JSON.stringify(baseBoards),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (r) {
+                    alert(r + " record(s) inserted.");
+                }
+            });
+        });
+    </script>
+</body>

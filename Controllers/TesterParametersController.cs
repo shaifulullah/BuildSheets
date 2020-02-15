@@ -19,114 +19,16 @@ namespace BuildSheets.Controllers
 {
     public class TesterParametersController : Controller
     {
+        #region Variables
         private readonly BuildSheetsDBContext _context;
         private readonly ITesterParameters testerParametersRepository;
+        #endregion
+
+        #region Constructor
         public TesterParametersController(BuildSheetsDBContext context, ITesterParameters testerParameters)
         {
             _context = context;
             testerParametersRepository = testerParameters;
-        }
-        #region Mass Editing
-        public IActionResult MassEditing()
-        {
-            GetDeviceType devicetype = new GetDeviceType();
-            ViewData["ChangeTypeId"] = new SelectList(devicetype.ListofDevices(), "Id", "Name");
-            GetListOfDevices newdeviceList = new GetListOfDevices();
-            var listing = newdeviceList.GetListofDevices();
-
-            return View(listing);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> MassEditing(string ChangeTypeId, string param, string ParameterValue)
-        {
-            if (ChangeTypeId != null && param != null && ParameterValue != null)
-            {
-                GetDeviceType getDeviceType = new GetDeviceType();
-                var listOfDevice = getDeviceType.ListofDevices().Where(d => d.Id == Convert.ToInt32(ChangeTypeId)).FirstOrDefault().Name;
-                List<TesterParameter> deviceList = testerParametersRepository.Main(listOfDevice).ToList();
-                List<TesterParameter> tp = testerParametersRepository.Main(listOfDevice).ToList();
-                List<TesterParameter> tpList = new List<TesterParameter>();
-
-
-                foreach (var device in deviceList)
-                {
-                    foreach (var iteminTp in tp)
-                    {
-                        if (tpList.Count < 1)
-                        {
-                            tpList.Add(device);
-                        }
-                        else if (iteminTp.DeviceName.ToLower() == device.DeviceName.ToLower() && iteminTp.Revision < device.Revision)
-                        {
-                            tpList.Remove(iteminTp);
-                            tpList.Add(device);
-                        }
-                        else if (iteminTp.DeviceName.ToLower() != device.DeviceName.ToLower())
-                        {
-                            tpList.Add(device);
-                        }
-                        else if (iteminTp.DeviceName.ToLower() == device.DeviceName.ToLower() && iteminTp.Revision > device.Revision)
-                        {
-                            break;
-                        }
-                    }
-                }
-                //foreach (var device in deviceList)
-                //{
-                //    if (tp.Count < 1)
-                //    {
-                //        tp.Add(device);
-                //    }
-                //    else
-                //    {
-                //        foreach (var iteminTp in tp)
-                //        {
-                //            if (iteminTp.DeviceName.ToLower() == device.DeviceName.ToLower() && iteminTp.Revision < device.Revision)
-                //            {
-                //                tp.Remove(iteminTp);
-                //                tp.Add(device);
-                //                break;
-                //            }
-                //            else if (iteminTp.DeviceName.ToLower() != device.DeviceName.ToLower())
-                //            {
-                //                tp.Add(device);
-                //                break;
-                //            }
-                //            else if (iteminTp.DeviceName.ToLower() == device.DeviceName.ToLower() && iteminTp.Revision > device.Revision)
-                //            {
-                //                break;
-                //            }
-                //        }
-                //    }
-                //}
-
-
-                string[] parentChild = param.Split("|");
-                string parentParameter = parentChild[0];
-                string childParameter = parentChild[1];
-
-                foreach (TesterParameter devices in deviceList)
-                {
-                    EditTesterParameter editTesterParameter = new EditTesterParameter();
-                    editTesterParameter.Id = devices.Id;
-                    editTesterParameter.ParameterName = childParameter;
-                    editTesterParameter.ParameterValue = ParameterValue;
-                    editTesterParameter.Type = (TesterParameterCodeType)System.Enum.Parse(typeof(TesterParameterCodeType), parentParameter);
-
-                    var product = testerParametersRepository.Edit(childParameter, string.Empty, editTesterParameter);
-
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
-                }
-                return MassEditing();
-            }
-            else
-            {
-                ViewData["ErrorMessage"] = "Please make sure you have entered value in each of the field above.";
-                return MassEditing();
-            }
-
         }
         #endregion
 
@@ -143,28 +45,244 @@ namespace BuildSheets.Controllers
 
             return isEditable;
         }
+
+        public bool CanEnableUpdateBuildSheetButton(string name, int revision)
+        {
+            var testerParameterId = _context.TesterParameters.Where(tp => tp.DeviceName.ToLower() == name.ToLower() && tp.Revision == revision).FirstOrDefault().Id;
+            var getBuildSheet = _context.BuildSheets.Where(bs => bs.ProductName.ToLower() == name.ToLower()).FirstOrDefault();
+            if (getBuildSheet != null)
+            {
+                if (getBuildSheet.TesterParameterId == testerParameterId)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            return true;
+        }
         #endregion
 
+        #region Coltroller Action Method
 
-        public IActionResult Main(string name)
+        #region Mass Editing
+        public IActionResult MassEditing()
         {
-            var testerParameter = testerParametersRepository.Main(name);
-            if (!string.IsNullOrWhiteSpace(name) && testerParameter == null)
+            GetDeviceType devicetype = new GetDeviceType();
+            ViewData["ChangeTypeId"] = new SelectList(devicetype.ListofDevices(), "Id", "Name");
+            GetListOfDevices newdeviceList = new GetListOfDevices();
+            var listing = newdeviceList.GetListofDevices();
+
+            return View(listing);
+        }
+        [HttpPost]
+        public async Task<IActionResult> MassEditing(string ChangeTypeId, string param, string ParameterValue = "")
+        {
+            if (ChangeTypeId != null && param != null)
             {
-                ViewBag.ErrorMessage = "No Result found";
-                return View(testerParameter);
+                GetDeviceType getDeviceType = new GetDeviceType();
+                var listOfDevice = getDeviceType.ListofDevices().Where(d => d.Id == Convert.ToInt32(ChangeTypeId)).FirstOrDefault().Name;
+                List<TesterParameter> deviceList = testerParametersRepository.Main(listOfDevice).ToList();
+                List<TesterParameter> tp = testerParametersRepository.Main(listOfDevice).ToList();
+                List<TesterParameter> tpList = new List<TesterParameter>();
+                List<TesterParameter> finalList = new List<TesterParameter>();
+
+                string[] parentChild = param.Split("|");
+                string parentParameter = parentChild[0];
+                string childParameter = parentChild[1];
+
+                foreach (var device in deviceList)
+                {
+                    //var nextRevision = _context.TesterParameters.FirstOrDefault(x => x.DeviceName.ToLower() == device.DeviceName.ToLower() && x.Revision == (device.Revision + 1));
+                    var nextRevision = tp.FirstOrDefault(x => x.DeviceName.ToLower() == device.DeviceName.ToLower() && x.Revision == (device.Revision + 1));
+                    if (nextRevision == null)
+                    {
+                        tpList.Add(device);
+                    }
+                }
+                foreach (TesterParameter testerParameter in tpList)
+                {
+                    var xmlSerializer = new XmlSerializer(typeof(TesterParameterCode));
+                    var testerparametercodes = testerParameter.TesterParameterCode = (TesterParameterCode)xmlSerializer.Deserialize(new StringReader(testerParameter.Parameter));
+                    if (parentParameter == "DeviceParameters")
+                    {
+                        if (testerparametercodes?.DeviceParameters?.Parameters != null)
+                        {
+                            foreach (var parameter in testerparametercodes?.DeviceParameters?.Parameters)
+                            {
+                                if (parameter.Name == childParameter && parameter.InnerText.ToLower() == ParameterValue.ToLower())
+                                {
+                                    finalList.Add(testerParameter);
+                                }
+                                else if (parameter.Name == childParameter && ParameterValue == null)
+                                {
+                                    finalList.Add(testerParameter);
+                                }
+                            }
+                        }
+                    }
+                    else if (parentParameter == "FirmwareGates")
+                    {
+                        if (testerparametercodes?.FirmwareGates?.Parameters != null)
+                        {
+                            foreach (var parameter in testerparametercodes?.FirmwareGates?.Parameters)
+                            {
+                                if (parameter.Name == childParameter && parameter.InnerText.ToLower() == ParameterValue.ToLower())
+                                {
+                                    finalList.Add(testerParameter);
+                                }
+                                else if (parameter.Name == childParameter && ParameterValue == null)
+                                {
+                                    finalList.Add(testerParameter);
+                                }
+                            }
+                        }
+                    }
+                    else if (parentParameter == "ModemIncludeList")
+                    {
+                        if (testerparametercodes?.ModemIncludeList?.Parameters != null)
+                        {
+                            foreach (var parameter in testerparametercodes?.ModemIncludeList?.Parameters)
+                            {
+                                if (parameter.Name == childParameter && parameter.InnerText.ToLower() == ParameterValue.ToLower())
+                                {
+                                    finalList.Add(testerParameter);
+                                }
+                                else if (parameter.Name == childParameter && ParameterValue == null)
+                                {
+                                    finalList.Add(testerParameter);
+                                }
+                            }
+                        }
+                    }
+                    else if (parentParameter == "ModemExcludeList")
+                    {
+                        if (testerparametercodes?.ModemExcludeList?.Parameters != null)
+                        {
+                            foreach (var parameter in testerparametercodes?.ModemExcludeList?.Parameters)
+                            {
+                                if (parameter.Name == childParameter && parameter.InnerText.ToLower() == ParameterValue.ToLower())
+                                {
+                                    finalList.Add(testerParameter);
+                                }
+                                else if (parameter.Name == childParameter && ParameterValue == null)
+                                {
+                                    finalList.Add(testerParameter);
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+
+                foreach (TesterParameter devices in tpList)
+                {
+                    EditTesterParameter editTesterParameter = new EditTesterParameter();
+                    editTesterParameter.Id = devices.Id;
+                    editTesterParameter.ParameterName = childParameter;
+                    editTesterParameter.Revision = devices.Revision;
+                    editTesterParameter.Type = (TesterParameterCodeType)System.Enum.Parse(typeof(TesterParameterCodeType), parentParameter);
+
+                    var product = testerParametersRepository.Edit(childParameter, string.Empty, editTesterParameter);
+
+                    _context.TesterParameters.Add(product);
+                    //await _context.SaveChangesAsync();
+                }
+                return MassEditing();
             }
             else
             {
-                ViewBag.SearchString = name;
-                return View(testerParameter);
+                ViewData["ErrorMessage"] = "Please make sure you have entered value in each of the field above.";
+                return MassEditing();
             }
+
+        }
+        //[HttpPost]
+        //public async Task<IActionResult> MassEditing(string ChangeTypeId, string param, string ParameterValue)
+        //{
+        //    if (ChangeTypeId != null && param != null && ParameterValue != null)
+        //    {
+        //        GetDeviceType getDeviceType = new GetDeviceType();
+        //        var listOfDevice = getDeviceType.ListofDevices().Where(d => d.Id == Convert.ToInt32(ChangeTypeId)).FirstOrDefault().Name;
+        //        List<TesterParameter> deviceList = testerParametersRepository.Main(listOfDevice).ToList();
+        //        List<TesterParameter> tp = testerParametersRepository.Main(listOfDevice).ToList();
+        //        List<TesterParameter> tpList = new List<TesterParameter>();
+
+        //        foreach (var device in deviceList)
+        //        {
+        //            //var nextRevision = _context.TesterParameters.FirstOrDefault(x => x.DeviceName.ToLower() == device.DeviceName.ToLower() && x.Revision == (device.Revision + 1));
+        //            var nextRevision = tp.FirstOrDefault(x => x.DeviceName.ToLower() == device.DeviceName.ToLower() && x.Revision == (device.Revision + 1));
+        //            if (nextRevision == null)
+        //            {
+        //                tpList.Add(device);
+        //            }
+        //        }
+
+        //        string[] parentChild = param.Split("|");
+        //        string parentParameter = parentChild[0];
+        //        string childParameter = parentChild[1];
+
+        //        foreach (TesterParameter devices in tpList)
+        //        {
+        //            EditTesterParameter editTesterParameter = new EditTesterParameter();
+        //            editTesterParameter.Id = devices.Id;
+        //            editTesterParameter.ParameterName = childParameter;
+        //            editTesterParameter.ParameterValue = ParameterValue;
+        //            editTesterParameter.Revision = devices.Revision;
+        //            editTesterParameter.Type = (TesterParameterCodeType)System.Enum.Parse(typeof(TesterParameterCodeType), parentParameter);
+
+        //            var product = testerParametersRepository.Edit(childParameter, string.Empty, editTesterParameter);
+
+        //            _context.TesterParameters.Add(product);
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        return MassEditing();
+        //    }
+        //    else
+        //    {
+        //        ViewData["ErrorMessage"] = "Please make sure you have entered value in each of the field above.";
+        //        return MassEditing();
+        //    }
+
+        //}
+        #endregion
+        //public IActionResult Main(string name)
+        //{
+        //    var testerParameter = testerParametersRepository.Main(name);
+        //    if (!string.IsNullOrWhiteSpace(name) && testerParameter == null)
+        //    {
+        //        ViewBag.ErrorMessage = "No Result found";
+        //        return View(testerParameter);
+        //    }
+        //    else
+        //    {
+        //        ViewBag.SearchString = name;
+        //        return View(testerParameter);
+        //    }
+        //}
+        public IActionResult Main()
+        {
+            var testerParameter = testerParametersRepository.GetAll();
+
+            return View(testerParameter);
+
         }
 
         public IActionResult Details(string name, int revision)
         {
             var DetailTesterParameter = testerParametersRepository.Details(name, revision);
             bool isEditable = CheckIsEditable(name, revision);
+            bool enableUpdateBuildSheetButton = CanEnableUpdateBuildSheetButton(name, revision);
+
+            if (!string.IsNullOrWhiteSpace(TempData["AddBuildSheetConfirmation"] as string))
+            {
+                ViewData["AddBuildSheetConfirmation"] = TempData["AddBuildSheetConfirmation"];
+            }
+
+            ViewData["enableUpdateBuildSheetButton"] = enableUpdateBuildSheetButton;
             ViewData["isEditable"] = isEditable;
             return View(DetailTesterParameter);
         }
@@ -217,10 +335,6 @@ namespace BuildSheets.Controllers
             ViewBag.FirmwareGatesName = dropDownListForFirmwareGates;
             ViewBag.ModemIncludeList = dropDownListForModemInclude;
 
-            if (!string.IsNullOrWhiteSpace(TempData["AddBuildSheetConfirmation"] as string))
-            {
-                ViewData["AddBuildSheetConfirmation"] = TempData["AddBuildSheetConfirmation"];
-            }
             return View();
         }
 
@@ -298,7 +412,8 @@ namespace BuildSheets.Controllers
             var model = new EditTesterParameter
             {
                 Id = id,
-                Type = type
+                Type = type,
+                Revision = revision
             };
             if (type == TesterParameterCodeType.DeviceParameters)
             {
@@ -423,16 +538,6 @@ namespace BuildSheets.Controllers
 
             return RedirectToAction("Details", new { name = device.DeviceName, revision = device.Revision });
         }
-
-        private string GetParameter(TesterParameterCodeType type, string sourceXml, string parameterName, int index)
-        {
-            var xmlDocument = new XmlDocument();
-            xmlDocument.LoadXml(sourceXml);
-
-            var parameterNode = xmlDocument.SelectNodes($"//ProductCode/{type}/{parameterName}");
-            return parameterNode[index]?.InnerText;
-        }
-
         public IActionResult UpdateBS(int id, string devicename, int revision)
         {
 
@@ -446,12 +551,25 @@ namespace BuildSheets.Controllers
             }
             else
             {
-                TempData["AddBuildSheetConfirmation"] = "No buildsheet found";
+                TempData["AddBuildSheetConfirmation"] = "No buildsheet found to update";
             }
 
-            return RedirectToAction("Details", new { name = devicename, revision });
-
+            return RedirectToAction("Details", new { name = devicename, revision = revision });
+            //return RedirectToAction("Details", new { name = devicename, revision });
         }
+        #endregion
+
+        #region Helper Method
+        private string GetParameter(TesterParameterCodeType type, string sourceXml, string parameterName, int index)
+        {
+            var xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(sourceXml);
+
+            var parameterNode = xmlDocument.SelectNodes($"//ProductCode/{type}/{parameterName}");
+            return parameterNode[index]?.InnerText;
+        }
+        #endregion
+
         #region Web API
         // GET: TesterParameter/Details/5
         //Sample Query String https://localhost/BuildSheetsArea/TesterParameters/GetTesterParameterJson?searchTerms=ATT-GO9LTE
@@ -464,62 +582,148 @@ namespace BuildSheets.Controllers
 
 
         //GET: TesterParameter/Details/5
-        //Sample Query String https://localhost/BuildSheetsArea/TesterParameters/GetTesterParameterXml?searchTerms=ATT-GO9LTE
-        //Sample Query String https://automationtest.geotab.com/BuildSheetsArea/TesterParameters/GetTesterParameterxml?searchTerms=ATT-GO73G1
+        //Sample Query String https://localhost/BuildSheetsArea/TesterParameters/GetTesterParameterXml?searchTerms=test
+        //Sample Query String https://localhost/BuildSheetsArea/TesterParameters/GetTesterParameterXml?searchTerms=test&revisionnumber=1
+        //Sample Query String  https://automationtest.geotab.com/BuildSheetsArea/TesterParameters/GetTesterParameterXml?searchTerms=test
+        //Sample Query String  https://automationtest.geotab.com/BuildSheetsArea/TesterParameters/GetTesterParameterXml?searchTerms=test&revisionnumber=1
         [HttpGet]
-        public IActionResult GetTesterParameterXml1(string searchTerms)
+        public IActionResult GetTesterParameterXml(string searchTerms, int revisionnumber = 0)
         {
-            var deviceList = _context.TesterParameters.Where(n => n.DeviceName == searchTerms.ToUpper()).Select(n => n.Parameter).FirstOrDefault();
-            OkObjectResult result = Ok(deviceList);
-            result.Formatters.Clear();
+            OkObjectResult result = null;
 
-            result.Formatters.Add(new Microsoft.AspNetCore.Mvc.Formatters.XmlSerializerOutputFormatter());
-            return result;
+            if (revisionnumber > 0)
+            {
+                var deviceList = _context.TesterParameters.Where(n => n.DeviceName.ToUpper() == searchTerms.ToUpper() && n.Revision == revisionnumber).Select(n => n.Parameter).FirstOrDefault();
+                result = Ok(deviceList);
+                result.Formatters.Clear();
+
+                result.Formatters.Add(new Microsoft.AspNetCore.Mvc.Formatters.XmlSerializerOutputFormatter());
+                return result;
+            }
+            else
+            {
+                var getDeviceList = _context.TesterParameters.Where(n => n.DeviceName.ToUpper() == searchTerms.ToUpper()).ToList();
+                TesterParameter deviceToSend = new TesterParameter();
+                foreach (var device in getDeviceList)
+                {
+                    if (deviceToSend.DeviceName == null)
+                    {
+                        deviceToSend = device;
+                    }
+                    else
+                    {
+                        if (device.Revision > deviceToSend.Revision)
+                        {
+                            deviceToSend = device;
+                        }
+                    }
+                }
+                var deviceList = deviceToSend.Parameter;
+                result = Ok(deviceList);
+                result.Formatters.Clear();
+
+                result.Formatters.Add(new Microsoft.AspNetCore.Mvc.Formatters.XmlSerializerOutputFormatter());
+                return result;
+            }
         }
 
+        //Sample Query String https://localhost/BuildSheetsArea/TesterParameters/GetTesterParameterXml1?searchTerms=test
+        //Sample Query String https://localhost/BuildSheetsArea/TesterParameters/GetTesterParameterXml1?searchTerms=test&revisionnumber=1
+        //Sample Query String  https://automationtest.geotab.com/BuildSheetsArea/TesterParameters/GetTesterParameterXml1?searchTerms=test
+        //Sample Query String  https://automationtest.geotab.com/BuildSheetsArea/TesterParameters/GetTesterParameterXml1?searchTerms=test&revisionnumber=1
         [HttpGet]
-        public IActionResult GetTesterParameterXml(string searchTerms)
+        public IActionResult GetTesterParameterXml1(string searchTerms, int revisionnumber = 0)
         {
+            OkObjectResult result = null;
             TesterParameter testerParameter = null;
-            testerParameter = _context.TesterParameters.FirstOrDefault(x => x.DeviceName.ToLower() == searchTerms.ToLower());
-            if (testerParameter == null)
+
+            if (revisionnumber > 0)
             {
-                Response.StatusCode = 404;
-                return View("NotFound");
+                testerParameter = _context.TesterParameters.FirstOrDefault(x => x.DeviceName.ToLower() == searchTerms.ToLower() && x.Revision == revisionnumber);
+                if (testerParameter == null)
+                {
+                    Response.StatusCode = 404;
+                    return View("NotFound");
+                }
+                else
+                {
+                    result = Build(testerParameter);
+                    return result;
+                }
             }
+            else
+            {
+                var getDeviceList = _context.TesterParameters.Where(n => n.DeviceName.ToUpper() == searchTerms.ToUpper()).ToList();
+                TesterParameter deviceToSend = new TesterParameter();
+                foreach (var device in getDeviceList)
+                {
+                    if (deviceToSend.DeviceName == null)
+                    {
+                        deviceToSend = device;
+                    }
+                    else
+                    {
+                        if (device.Revision > deviceToSend.Revision)
+                        {
+                            deviceToSend = device;
+                        }
+                    }
+                }
+                result = Build(deviceToSend);
+                return result;
+            }
+        }
+
+        public OkObjectResult Build(TesterParameter testerParameter)
+        {
             var xmlSerializer = new XmlSerializer(typeof(TesterParameterCode));
             testerParameter.TesterParameterCode = (TesterParameterCode)xmlSerializer.Deserialize(new StringReader(testerParameter.Parameter));
 
             var sb = new StringBuilder();
-            if (testerParameter.TesterParameterCode.DeviceParameters.Parameters != null)
+            if (testerParameter.TesterParameterCode.DeviceParameters != null)
             {
-                foreach (var param in testerParameter.TesterParameterCode.DeviceParameters.Parameters)
+                if (testerParameter.TesterParameterCode.DeviceParameters.Parameters != null)
                 {
-                    sb.Append($"<{param.Name}>{param.InnerText}</{ param.Name}> ");
+                    foreach (var param in testerParameter.TesterParameterCode.DeviceParameters.Parameters)
+                    {
+                        sb.Append($"<{param.Name}>{param.InnerText}</{ param.Name}> ");
+                    }
                 }
             }
 
             if (testerParameter.TesterParameterCode.FirmwareGates.Parameters != null)
             {
-                foreach (var param in testerParameter.TesterParameterCode.FirmwareGates.Parameters)
+                if (testerParameter.TesterParameterCode.FirmwareGates.Parameters != null)
                 {
-                    sb.Append($"<{param.Name}>{param.InnerText}</{ param.Name}>");
+                    foreach (var param in testerParameter.TesterParameterCode.FirmwareGates.Parameters)
+                    {
+                        sb.Append($"<{param.Name}>{param.InnerText}</{ param.Name}>");
+                    }
                 }
             }
-            if (testerParameter.TesterParameterCode.ModemIncludeList.Parameters != null)
+
+
+            if (testerParameter.TesterParameterCode.ModemIncludeList != null)
             {
-                foreach (var param in testerParameter.TesterParameterCode.ModemIncludeList.Parameters)
+                if (testerParameter.TesterParameterCode.ModemIncludeList.Parameters != null)
                 {
-                    sb.Append($"<{param.Name}>{param.InnerText}</{ param.Name}>");
+                    foreach (var param in testerParameter.TesterParameterCode.ModemIncludeList.Parameters)
+                    {
+                        sb.Append($"<{param.Name}>{param.InnerText}</{ param.Name}>");
+                    }
                 }
             }
-            if (testerParameter.TesterParameterCode.ModemExcludeList.Parameters != null)
+            if (testerParameter.TesterParameterCode.ModemExcludeList != null)
             {
-                foreach (var param in testerParameter.TesterParameterCode.ModemExcludeList.Parameters)
+                if (testerParameter.TesterParameterCode.ModemExcludeList.Parameters != null)
                 {
-                    sb.Append($"<{param.Name}>{param.InnerText}</{ param.Name}>");
+                    foreach (var param in testerParameter.TesterParameterCode.ModemExcludeList.Parameters)
+                    {
+                        sb.Append($"<{param.Name}>{param.InnerText}</{ param.Name}>");
+                    }
                 }
             }
+
             //var test = string.Join("<>", sb);
             //var xmlDocument = new XmlDocument();
             //xmlDocument.LoadXml(sb.ToString());

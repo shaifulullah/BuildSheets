@@ -10,7 +10,9 @@ namespace BuildSheets.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
+        [Display(Name = "Revision Number"),Required]
         public string Rev { get; set; }
         public string URL { get; set; }
         public virtual ICollection<BaseBoardBuildSheet> BaseBoardBuildSheets { get; set; }

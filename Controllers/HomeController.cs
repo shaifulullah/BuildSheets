@@ -10,7 +10,7 @@ namespace BuildSheets.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Main()
         {
             return View();
         }

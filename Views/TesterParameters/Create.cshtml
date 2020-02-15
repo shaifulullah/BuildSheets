@@ -5,10 +5,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<head>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
-</head>
 <h1>Create New</h1>
 
 <hr />
@@ -32,7 +28,7 @@
                 <div class="form-group">
                     <label class="control-label">Name: (Please enter a name without any spaces)</label>
                     @*<input name="DeviceParameters.Parameters[@i].Key" class="form-control noWhiteSpaces" />*@
-                    <select class="combobox form-control noWhiteSpaces" name="DeviceParameters.Parameters[@i].Key" role="combobox">
+                    <select class="selectList form-control noWhiteSpaces" name="DeviceParameters.Parameters[@i].Key" role="selectList">
                         @foreach (SelectListItem sli in ViewBag.DeviceParameterName)
                         {
                             if (sli.Value == "1")
@@ -58,7 +54,7 @@
                 <div class="form-group">
                     <label class="control-label">Name: (Please enter a name without any spaces)</label>
                     @*<input name="FirmwareGates.Parameters[@i].Key" class="form-control noWhiteSpaces" />*@
-                    <select class="combobox form-control noWhiteSpaces" name="FirmwareGates.Parameters[@i].Key" role="combobox">
+                    <select class="selectList form-control noWhiteSpaces" name="FirmwareGates.Parameters[@i].Key" role="selectList">
                         @foreach (SelectListItem sli in ViewBag.FirmwareGatesName)
                         {
                             if (sli.Value == "1")
@@ -85,7 +81,7 @@
                 <div class="form-group">
                     <label class="control-label">Name: (Please enter a name without any spaces)</label>
                     @*<input name="ModemIncludeList.Parameters[@i].Key" class="form-control noWhiteSpaces" />*@
-                    <select class="combobox form-control noWhiteSpaces" name="ModemIncludeList.Parameters[@i].Key" role="combobox">
+                    <select class="selectList form-control noWhiteSpaces" name="ModemIncludeList.Parameters[@i].Key" role="selectList">
                         @foreach (SelectListItem sli in ViewBag.ModemIncludeList)
                         {
                             if (sli.Value == "1")
@@ -139,8 +135,11 @@
         });
     </script>
     <script>
-        $(".combobox").select2({
-            tags: true
+        $(".selectList").select2({
+            placeholder: 'Select an Option',
+            width: 'element',
+            allowClear: true,
+            //tags: true
         });
     </script>
 }

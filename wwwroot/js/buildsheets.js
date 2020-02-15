@@ -7,6 +7,36 @@ $(function () {
     });
 })
 $('document').ready(function () {
+    $('#MainTableBS').DataTable({
+        "order": [[0, "desc"]],
+        "columnDefs": [
+            { "orderable": false, "targets": [0, 1, 2] },
+            { "width": '20%', "targets": [0] },
+            { "width": '60%', "targets": [1] },
+            { "width": '20%', "targets": [2] },
+        ],
+    });
+    $('#MainTableTP').DataTable({
+        "order": [[0, "desc"]],
+        "columnDefs": [
+            { "orderable": false, "targets": [0, 1, 2] },
+            { "width": '15%', "targets": [0] },
+            { "width": '75%', "targets": [1] },
+            { "width": '10%', "targets": [2] },
+        ],
+    });
+    $('#DetailTableBaseBoard').DataTable({
+        "order": [[0, "desc"]],
+        "columnDefs": [
+            { "orderable": false, "targets": [0, 1, 2, 3] },
+            { "width": '20%', "targets": [0] },
+            { "width": '50%', "targets": [1] },
+            { "width": '10%', "targets": [2] },
+            { "width": '20%', "targets": [3] },
+        ],
+    });
+
+
     var elements = document.getElementsByClassName("linkSpan");
     $(elements).each(function (e, element) {
         names.push($(element).attr("name")) //push the name to the array if it already exists
